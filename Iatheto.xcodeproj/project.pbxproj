@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F3180BA01C8615AD00075059 /* Foo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3180B9D1C86151800075059 /* Foo.swift */; };
+		F3180BA11C8615AE00075059 /* Foo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3180B9D1C86151800075059 /* Foo.swift */; };
+		F3180BA31C8615C900075059 /* Envelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3180BA21C8615C900075059 /* Envelope.swift */; };
+		F3180BA41C8615C900075059 /* Envelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3180BA21C8615C900075059 /* Envelope.swift */; };
 		F3591FBE1C86077500DD13F5 /* Iatheto.h in Headers */ = {isa = PBXBuildFile; fileRef = F3591FBD1C86077500DD13F5 /* Iatheto.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3591FC51C86077500DD13F5 /* Iatheto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3591FBA1C86077500DD13F5 /* Iatheto.framework */; };
 		F3591FCA1C86077500DD13F5 /* IathetoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3591FC91C86077500DD13F5 /* IathetoTests.swift */; };
@@ -34,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F3180B9D1C86151800075059 /* Foo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Foo.swift; sourceTree = "<group>"; };
+		F3180BA21C8615C900075059 /* Envelope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Envelope.swift; sourceTree = "<group>"; };
 		F3591FBA1C86077500DD13F5 /* Iatheto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Iatheto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3591FBD1C86077500DD13F5 /* Iatheto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Iatheto.h; sourceTree = "<group>"; };
 		F3591FBF1C86077500DD13F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -114,6 +120,8 @@
 			children = (
 				F3591FC91C86077500DD13F5 /* IathetoTests.swift */,
 				F3591FCB1C86077500DD13F5 /* Info.plist */,
+				F3180B9D1C86151800075059 /* Foo.swift */,
+				F3180BA21C8615C900075059 /* Envelope.swift */,
 			);
 			path = IathetoTests;
 			sourceTree = "<group>";
@@ -300,6 +308,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3180BA01C8615AD00075059 /* Foo.swift in Sources */,
+				F3180BA31C8615C900075059 /* Envelope.swift in Sources */,
 				F3591FCA1C86077500DD13F5 /* IathetoTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -316,6 +326,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3180BA11C8615AE00075059 /* Foo.swift in Sources */,
+				F3180BA41C8615C900075059 /* Envelope.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -571,6 +583,7 @@
 				F3591FD01C86077500DD13F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F3591FD11C86077500DD13F5 /* Build configuration list for PBXNativeTarget "IathetoTests iOS" */ = {
 			isa = XCConfigurationList;
@@ -579,6 +592,7 @@
 				F3591FD31C86077500DD13F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F3591FEA1C8608D900DD13F5 /* Build configuration list for PBXNativeTarget "Iatheto OSX" */ = {
 			isa = XCConfigurationList;
@@ -587,6 +601,7 @@
 				F3591FEC1C8608D900DD13F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F3591FED1C8608D900DD13F5 /* Build configuration list for PBXNativeTarget "IathetoTests OSX" */ = {
 			isa = XCConfigurationList;
@@ -595,6 +610,7 @@
 				F3591FEF1C8608D900DD13F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
