@@ -10,6 +10,7 @@
 		F3591FBE1C86077500DD13F5 /* Iatheto.h in Headers */ = {isa = PBXBuildFile; fileRef = F3591FBD1C86077500DD13F5 /* Iatheto.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3591FC51C86077500DD13F5 /* Iatheto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3591FBA1C86077500DD13F5 /* Iatheto.framework */; };
 		F3591FCA1C86077500DD13F5 /* IathetoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3591FC91C86077500DD13F5 /* IathetoTests.swift */; };
+		F3591FE31C8608D900DD13F5 /* Iatheto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3591FD91C8608D900DD13F5 /* Iatheto.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -18,6 +19,13 @@
 			containerPortal = F3591FB11C86077500DD13F5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3591FB91C86077500DD13F5;
+			remoteInfo = Iatheto;
+		};
+		F3591FE41C8608D900DD13F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3591FB11C86077500DD13F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3591FD81C8608D900DD13F5;
 			remoteInfo = Iatheto;
 		};
 /* End PBXContainerItemProxy section */
@@ -29,6 +37,8 @@
 		F3591FC41C86077500DD13F5 /* IathetoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IathetoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3591FC91C86077500DD13F5 /* IathetoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IathetoTests.swift; sourceTree = "<group>"; };
 		F3591FCB1C86077500DD13F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F3591FD91C8608D900DD13F5 /* Iatheto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Iatheto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3591FE21C8608D900DD13F5 /* IathetoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IathetoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +54,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3591FC51C86077500DD13F5 /* Iatheto.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3591FD51C8608D900DD13F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3591FDF1C8608D900DD13F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3591FE31C8608D900DD13F5 /* Iatheto.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +89,8 @@
 			children = (
 				F3591FBA1C86077500DD13F5 /* Iatheto.framework */,
 				F3591FC41C86077500DD13F5 /* IathetoTests.xctest */,
+				F3591FD91C8608D900DD13F5 /* Iatheto.framework */,
+				F3591FE21C8608D900DD13F5 /* IathetoTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -97,12 +124,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F3591FD61C8608D900DD13F5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		F3591FB91C86077500DD13F5 /* Iatheto */ = {
+		F3591FB91C86077500DD13F5 /* Iatheto iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3591FCE1C86077500DD13F5 /* Build configuration list for PBXNativeTarget "Iatheto" */;
+			buildConfigurationList = F3591FCE1C86077500DD13F5 /* Build configuration list for PBXNativeTarget "Iatheto iOS" */;
 			buildPhases = (
 				F3591FB51C86077500DD13F5 /* Sources */,
 				F3591FB61C86077500DD13F5 /* Frameworks */,
@@ -113,14 +147,14 @@
 			);
 			dependencies = (
 			);
-			name = Iatheto;
+			name = "Iatheto iOS";
 			productName = Iatheto;
 			productReference = F3591FBA1C86077500DD13F5 /* Iatheto.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		F3591FC31C86077500DD13F5 /* IathetoTests */ = {
+		F3591FC31C86077500DD13F5 /* IathetoTests iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3591FD11C86077500DD13F5 /* Build configuration list for PBXNativeTarget "IathetoTests" */;
+			buildConfigurationList = F3591FD11C86077500DD13F5 /* Build configuration list for PBXNativeTarget "IathetoTests iOS" */;
 			buildPhases = (
 				F3591FC01C86077500DD13F5 /* Sources */,
 				F3591FC11C86077500DD13F5 /* Frameworks */,
@@ -131,9 +165,45 @@
 			dependencies = (
 				F3591FC71C86077500DD13F5 /* PBXTargetDependency */,
 			);
-			name = IathetoTests;
+			name = "IathetoTests iOS";
 			productName = IathetoTests;
 			productReference = F3591FC41C86077500DD13F5 /* IathetoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F3591FD81C8608D900DD13F5 /* Iatheto OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3591FEA1C8608D900DD13F5 /* Build configuration list for PBXNativeTarget "Iatheto OSX" */;
+			buildPhases = (
+				F3591FD41C8608D900DD13F5 /* Sources */,
+				F3591FD51C8608D900DD13F5 /* Frameworks */,
+				F3591FD61C8608D900DD13F5 /* Headers */,
+				F3591FD71C8608D900DD13F5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Iatheto OSX";
+			productName = Iatheto;
+			productReference = F3591FD91C8608D900DD13F5 /* Iatheto.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		F3591FE11C8608D900DD13F5 /* IathetoTests OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3591FED1C8608D900DD13F5 /* Build configuration list for PBXNativeTarget "IathetoTests OSX" */;
+			buildPhases = (
+				F3591FDE1C8608D900DD13F5 /* Sources */,
+				F3591FDF1C8608D900DD13F5 /* Frameworks */,
+				F3591FE01C8608D900DD13F5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F3591FE51C8608D900DD13F5 /* PBXTargetDependency */,
+			);
+			name = "IathetoTests OSX";
+			productName = IathetoTests;
+			productReference = F3591FE21C8608D900DD13F5 /* IathetoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -152,6 +222,12 @@
 					F3591FC31C86077500DD13F5 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
+					F3591FD81C8608D900DD13F5 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+					F3591FE11C8608D900DD13F5 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 				};
 			};
 			buildConfigurationList = F3591FB41C86077500DD13F5 /* Build configuration list for PBXProject "Iatheto" */;
@@ -166,8 +242,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F3591FB91C86077500DD13F5 /* Iatheto */,
-				F3591FC31C86077500DD13F5 /* IathetoTests */,
+				F3591FB91C86077500DD13F5 /* Iatheto iOS */,
+				F3591FC31C86077500DD13F5 /* IathetoTests iOS */,
+				F3591FD81C8608D900DD13F5 /* Iatheto OSX */,
+				F3591FE11C8608D900DD13F5 /* IathetoTests OSX */,
 			);
 		};
 /* End PBXProject section */
@@ -181,6 +259,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F3591FC21C86077500DD13F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3591FD71C8608D900DD13F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3591FE01C8608D900DD13F5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -205,13 +297,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F3591FD41C8608D900DD13F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3591FDE1C8608D900DD13F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		F3591FC71C86077500DD13F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3591FB91C86077500DD13F5 /* Iatheto */;
+			target = F3591FB91C86077500DD13F5 /* Iatheto iOS */;
 			targetProxy = F3591FC61C86077500DD13F5 /* PBXContainerItemProxy */;
+		};
+		F3591FE51C8608D900DD13F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3591FD81C8608D900DD13F5 /* Iatheto OSX */;
+			targetProxy = F3591FE41C8608D900DD13F5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -316,7 +427,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.Iatheto;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Iatheto;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -332,7 +443,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.Iatheto;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Iatheto;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -343,7 +454,7 @@
 				INFOPLIST_FILE = IathetoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = IathetoTests;
 			};
 			name = Debug;
 		};
@@ -353,7 +464,77 @@
 				INFOPLIST_FILE = IathetoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = IathetoTests;
+			};
+			name = Release;
+		};
+		F3591FEB1C8608D900DD13F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = Iatheto/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.Iatheto;
+				PRODUCT_NAME = Iatheto;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		F3591FEC1C8608D900DD13F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = Iatheto/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.Iatheto;
+				PRODUCT_NAME = Iatheto;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		F3591FEE1C8608D900DD13F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = IathetoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
+				PRODUCT_NAME = IathetoTests;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F3591FEF1C8608D900DD13F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = IathetoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
+				PRODUCT_NAME = IathetoTests;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -369,7 +550,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F3591FCE1C86077500DD13F5 /* Build configuration list for PBXNativeTarget "Iatheto" */ = {
+		F3591FCE1C86077500DD13F5 /* Build configuration list for PBXNativeTarget "Iatheto iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3591FCF1C86077500DD13F5 /* Debug */,
@@ -377,11 +558,27 @@
 			);
 			defaultConfigurationIsVisible = 0;
 		};
-		F3591FD11C86077500DD13F5 /* Build configuration list for PBXNativeTarget "IathetoTests" */ = {
+		F3591FD11C86077500DD13F5 /* Build configuration list for PBXNativeTarget "IathetoTests iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3591FD21C86077500DD13F5 /* Debug */,
 				F3591FD31C86077500DD13F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F3591FEA1C8608D900DD13F5 /* Build configuration list for PBXNativeTarget "Iatheto OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3591FEB1C8608D900DD13F5 /* Debug */,
+				F3591FEC1C8608D900DD13F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F3591FED1C8608D900DD13F5 /* Build configuration list for PBXNativeTarget "IathetoTests OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3591FEE1C8608D900DD13F5 /* Debug */,
+				F3591FEF1C8608D900DD13F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

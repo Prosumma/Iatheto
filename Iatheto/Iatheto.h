@@ -6,7 +6,7 @@
 //  Copyright © 2016 Gregory Higley. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for Iatheto.
 FOUNDATION_EXPORT double IathetoVersionNumber;
