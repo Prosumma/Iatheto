@@ -192,7 +192,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     /**
      Used for converting JSON strings into numbers.
     */
-    public static var numberFormatter: NSNumberFormatter = {
+    public static var encodingNumberFormatter: NSNumberFormatter = {
         let numberFormatter = NSNumberFormatter()
         numberFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
         return numberFormatter
@@ -309,7 +309,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         get {
             switch self {
             case .Number(let number): return number
-            case .String(let string): return JSON.numberFormatter.numberFromString(string)
+            case .String(let string): return JSON.encodingNumberFormatter.numberFromString(string)
             default: return nil
             }
         }
