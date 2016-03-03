@@ -167,6 +167,13 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         self = try JSON(NSJSONSerialization.JSONObjectWithData(data, options: []))
     }
     
+    /**
+     Initializes `JSON` with a string containing well-formed JSON.
+    */
+    public init(string: Swift.String) throws {
+        try self.init(data: string.dataUsingEncoding(NSUTF8StringEncoding)!)
+    }
+    
     public init(_ value: AnyObject?) throws {
         guard let value = value else {
             self = .Null
