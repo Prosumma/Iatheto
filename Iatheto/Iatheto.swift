@@ -190,6 +190,15 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     public typealias JSONArray = Swift.Array<JSON>
     
     /**
+     Used for converting JSON strings into numbers.
+    */
+    public static var numberFormatter: NSNumberFormatter = {
+        let numberFormatter = NSNumberFormatter()
+        numberFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+        return numberFormatter
+    }()
+    
+    /**
      Used for converting JSON strings into dates.
     */
     public static var encodingDateFormatter: NSDateFormatter = {
@@ -298,10 +307,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public var number: NSNumber? {
         get {
-            if case .Number(let number) = self {
-                return number
-            } else {
-                return nil
+            switch self {
+            case .Number(let number): return number
+            case .String(let string): return JSON.numberFormatter.numberFromString(string)
+            default: return nil
             }
         }
         set {
