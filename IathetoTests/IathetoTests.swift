@@ -21,7 +21,6 @@ class IathetoTests: XCTestCase {
         } catch let e {
             XCTAssert(false, String(e))
         }
-        
     }
     
 }

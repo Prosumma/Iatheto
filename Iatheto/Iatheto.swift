@@ -17,6 +17,10 @@ public protocol JSONEncodable {
     init(json: JSON) throws
 }
 
+public protocol JSONSettable {
+    mutating func setWithJSON(json: JSON) throws
+}
+
 public protocol JSONDecodable {
     func decode() -> JSON
 }
@@ -24,10 +28,18 @@ public protocol JSONDecodable {
 /**
  A thunk between `JSONEncodable` and an underlying array.
  */
-public struct JSONEncodableArray<Element: JSONEncodable>: JSONEncodable {
+public struct JSONEncodableArray<Element: JSONEncodable>: JSONEncodable, JSONSettable {
     public var array: [Element]
+
+    public init() {
+        array = [Element]()
+    }
     
     public init(json: JSON) throws {
+        array = try [Element](json: json)
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
         array = try [Element](json: json)
     }
 }
@@ -35,8 +47,12 @@ public struct JSONEncodableArray<Element: JSONEncodable>: JSONEncodable {
 /**
  A thunk between `JSONEncodable`, `JSONDecodable`, and an underlying array.
  */
-public struct JSONEncodableDecodableArray<Element: JSONEncodable where Element: JSONDecodable>: JSONEncodable, JSONDecodable {
+public struct JSONEncodableDecodableArray<Element: JSONEncodable where Element: JSONDecodable>: JSONEncodable, JSONSettable, JSONDecodable {
     public var array: [Element]
+    
+    public init() {
+        array = [Element]()
+    }
     
     public init(_ array: [Element]) {
         self.array = array
@@ -48,6 +64,10 @@ public struct JSONEncodableDecodableArray<Element: JSONEncodable where Element: 
     
     public func decode() -> JSON {
         return array.decode()
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
+        array = try [Element](json: json)
     }
 }
 
@@ -79,10 +99,18 @@ extension Array where Element: JSONEncodable {
 /**
  This type serves as a thunk between `JSONEncodable` and `Dictionary`.
 */
-public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable {
+public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable, JSONSettable {
     public var dictionary: [String: Value]
     
+    public init() {
+        dictionary = [:]
+    }
+    
     public init(json: JSON) throws {
+        dictionary = try [String: Value](json: json)
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
         dictionary = try [String: Value](json: json)
     }
 }
@@ -90,14 +118,22 @@ public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable {
 /**
  This type serves as a thunk between `JSONEncodable` and `JSONDecodable` on the one hand, and `Dictionary` on the other.
 */
-public struct JSONEncodableDecodableDictionary<Value: JSONEncodable where Value: JSONDecodable>: JSONEncodable, JSONDecodable {
+public struct JSONEncodableDecodableDictionary<Value: JSONEncodable where Value: JSONDecodable>: JSONEncodable, JSONSettable, JSONDecodable {
     public var dictionary: [String: Value]
+    
+    public init() {
+        dictionary = [:]
+    }
     
     public init(_ dictionary: [String: Value]) {
         self.dictionary = dictionary
     }
     
     public init(json: JSON) throws {
+        dictionary = try [String: Value](json: json)
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
         dictionary = try [String: Value](json: json)
     }
 
@@ -238,19 +274,6 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var stringValue: Swift.String {
-        get {
-            if case .String(let string) = self {
-                return string
-            } else {
-                return ""
-            }
-        }
-        set {
-            self = .String(newValue)
-        }
-    }
-
     public func dateWithFormatter(formatter: NSDateFormatter) -> NSDate? {
         guard let string = self.string else { return nil }
         return formatter.dateFromString(string)
@@ -273,15 +296,6 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var dateValue: NSDate {
-        get {
-            return date ?? NSDate()
-        }
-        set {
-            date = newValue
-        }
-    }
-    
     public var number: NSNumber? {
         get {
             if case .Number(let number) = self {
@@ -296,19 +310,6 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             } else {
                 self = .Null
             }
-        }
-    }
-    
-    public var numberValue: NSNumber {
-        get {
-            if case .Number(let number) = self {
-                return number
-            } else {
-                return 0
-            }
-        }
-        set {
-            self = .Number(newValue)
         }
     }
     
@@ -329,19 +330,6 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var arrayValue: JSONArray {
-        get {
-            if case .Array(let array) = self {
-                return array
-            } else {
-                return JSONArray()
-            }
-        }
-        set {
-            self = .Array(newValue)
-        }
-    }
-    
     public var dictionary: JSONDictionary? {
         get {
             if case .Dictionary(let dictionary) = self {
@@ -359,19 +347,6 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var dictionaryValue: JSONDictionary {
-        get {
-            if case .Dictionary(let dictionary) = self {
-                return dictionary
-            } else {
-                return JSONDictionary()
-            }
-        }
-        set {
-            self = .Dictionary(newValue)
-        }
-    }
-    
     public var bool: Bool? {
         get {
             return number?.boolValue
@@ -382,15 +357,6 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             } else {
                 self = .Null
             }
-        }
-    }
-    
-    public var boolValue: Bool {
-        get {
-            return numberValue.boolValue
-        }
-        set {
-            numberValue = NSNumber(bool: newValue)
         }
     }
     
@@ -407,15 +373,6 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var intValue: Int {
-        get {
-            return numberValue.integerValue
-        }
-        set {
-            numberValue = NSNumber(integer: newValue)
-        }
-    }
-    
     public var double: Double? {
         get {
             return number?.doubleValue
@@ -429,34 +386,16 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var doubleValue: Double {
-        get {
-            return numberValue.doubleValue
-        }
-        set {
-            numberValue = NSNumber(double: newValue)
-        }
-    }
-    
     public var float: Float? {
         get {
             return number?.floatValue
         }
         set {
             if let float = newValue {
-                numberValue = NSNumber(float: float)
+                number = NSNumber(float: float)
             } else {
                 self = .Null
             }
-        }
-    }
-    
-    public var floatValue: Float {
-        get {
-            return numberValue.floatValue
-        }
-        set {
-            numberValue = NSNumber(float: newValue)
         }
     }
     
@@ -482,7 +421,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             }
         }
         set {
-            arrayValue[index] = newValue
+            array![index] = newValue
         }
     }
     
@@ -495,7 +434,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             }
         }
         set {
-            dictionaryValue[key] = newValue
+            dictionary![key] = newValue
         }
     }
     
