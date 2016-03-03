@@ -212,6 +212,104 @@ extension SequenceType where Generator.Element: JSONDecodable {
     }
 }
 
+extension NSNull: JSONAssignable, JSONDecodable {
+    public func setWithJSON(json: JSON) throws {
+        guard case .Null = json else {
+            throw JSONError.UnexpectedType(json)
+        }
+    }
+    
+    public func decode() -> JSON {
+        return .Null
+    }
+}
+
+extension String: JSONEncodable, JSONAssignable, JSONDecodable {
+    public init(json: JSON) throws {
+        guard let string = json.string else {
+            throw JSONError.UnexpectedType(json)
+        }
+        self = string
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
+        guard case .String(let string) = json else {
+            throw JSONError.UnexpectedType(json)
+        }
+        self = string
+    }
+    
+    public func decode() -> JSON {
+        return .String(self)
+    }
+}
+
+extension NSNumber: JSONDecodable {
+    public func decode() -> JSON {
+        return .Number(self)
+    }
+}
+
+extension Int: JSONEncodable, JSONAssignable, JSONDecodable {
+    public init(json: JSON) throws {
+        guard let int = json.int else {
+            throw JSONError.UnexpectedType(json)
+        }
+        self = int
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
+        guard let int = json.int else {
+            throw JSONError.UnexpectedType(json)
+        }
+        self = int
+    }
+    
+    public func decode() -> JSON {
+        return .Number(NSNumber(integer: self))
+    }
+}
+
+extension Double: JSONEncodable, JSONAssignable, JSONDecodable {
+    public init(json: JSON) throws {
+        guard let double = json.double else {
+            throw JSONError.UnexpectedType(json)
+        }
+        self = double
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
+        guard let double = json.double else {
+            throw JSONError.UnexpectedType(json)
+        }
+        self = double
+    }
+    
+    public func decode() -> JSON {
+        return .Number(NSNumber(double: self))
+    }
+}
+
+extension Float: JSONEncodable, JSONAssignable, JSONDecodable {
+    public init(json: JSON) throws {
+        guard let float = json.float else {
+            throw JSONError.UnexpectedType(json)
+        }
+        self = float
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
+        guard let float = json.float else {
+            throw JSONError.UnexpectedType(json)
+        }
+        self = float
+    }
+    
+    public func decode() -> JSON {
+        return .Number(NSNumber(float: self))
+    }
+}
+
 public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible {
     public typealias JSONDictionary = Swift.Dictionary<Swift.String, JSON>
     public typealias JSONArray = Swift.Array<JSON>
@@ -435,13 +533,12 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var null: Bool {
+    public var null: NSNull? {
         get {
-            if case .Null = self {
-                return true
-            } else {
-                return false
+            guard case .Null = self else {
+                return nil
             }
+            return NSNull()
         }
         set {
             self = .Null
