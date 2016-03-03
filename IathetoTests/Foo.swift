@@ -9,14 +9,20 @@
 import Foundation
 @testable import Iatheto
 
-struct Foo: JSONEncodable, JSONDecodable, Equatable {
-    let name: String
+struct Foo: JSONEncodable, JSONAssignable, JSONDecodable, Equatable {
+    private(set) var name: String = ""
     
     init(name: String) {
         self.name = name
     }
+
+    init() {}
     
     init(json: JSON) throws {
+        name = json["name"].string!
+    }
+    
+    mutating func setWithJSON(json: JSON) throws {
         name = json["name"].string!
     }
     

@@ -11,6 +11,7 @@ import Foundation
 public enum JSONError: ErrorType {
     case UnknownType(AnyObject)
     case UnexpectedType(JSON)
+    case UnequalCollections // for JSONAssignable with collections
 }
 
 public protocol JSONEncodable {
@@ -96,6 +97,18 @@ extension Array where Element: JSONEncodable {
     }
 }
 
+extension Array where Element: JSONAssignable {
+    public mutating func setWithJSON(json: JSON) throws {
+        guard case .Array(let array) = json else {
+            throw JSONError.UnexpectedType(json)
+        }
+        if array.count != count { throw JSONError.UnequalCollections }
+        for e in 0..<count {
+            try self[e].setWithJSON(array[e])
+        }
+    }
+}
+
 /**
  This type serves as a thunk between `JSONEncodable` and `Dictionary`.
 */
@@ -165,6 +178,20 @@ extension Dictionary where Value: JSONEncodable {
         self.init()
         for (key, json) in dictionary {
             self[key as! Key] = try Value(json: json)
+        }
+    }
+}
+
+extension Dictionary where Value: JSONAssignable {
+    public mutating func setWithJSON(json: JSON) throws {
+        guard case .Dictionary(let dictionary) = json else {
+            throw JSONError.UnexpectedType(json)
+        }
+        for key in keys {
+            guard let json = dictionary[String(key)] else {
+                throw JSONError.UnequalCollections
+            }
+            try self[key]?.setWithJSON(json)
         }
     }
 }

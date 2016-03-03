@@ -23,4 +23,20 @@ class IathetoTests: XCTestCase {
         }
     }
     
+    func testAssignableArray() {
+        let jsonString = "[{\"name\": \"foo\"}]"
+        let json = try! JSON(string: jsonString)
+        var array = [Foo()]
+        try! array.setWithJSON(json)
+        XCTAssertEqual(array[0].name, "foo")
+    }
+    
+    func testAssignableDictionary() {
+        let jsonString = "{\"foo\": {\"name\": \"bar\"}}"
+        let json = try! JSON(string: jsonString)
+        var dictionary = ["foo": Foo(name: "foo")]
+        try! dictionary.setWithJSON(json)
+        XCTAssertEqual(dictionary["foo"]!.name, "bar")
+    }
+    
 }
