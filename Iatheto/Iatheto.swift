@@ -17,7 +17,7 @@ public protocol JSONEncodable {
     init(json: JSON) throws
 }
 
-public protocol JSONSettable {
+public protocol JSONAssignable {
     mutating func setWithJSON(json: JSON) throws
 }
 
@@ -28,7 +28,7 @@ public protocol JSONDecodable {
 /**
  A thunk between `JSONEncodable` and an underlying array.
  */
-public struct JSONEncodableArray<Element: JSONEncodable>: JSONEncodable, JSONSettable {
+public struct JSONEncodableArray<Element: JSONEncodable>: JSONEncodable, JSONAssignable {
     public var array: [Element]
 
     public init() {
@@ -47,7 +47,7 @@ public struct JSONEncodableArray<Element: JSONEncodable>: JSONEncodable, JSONSet
 /**
  A thunk between `JSONEncodable`, `JSONDecodable`, and an underlying array.
  */
-public struct JSONEncodableDecodableArray<Element: JSONEncodable where Element: JSONDecodable>: JSONEncodable, JSONSettable, JSONDecodable {
+public struct JSONEncodableDecodableArray<Element: JSONEncodable where Element: JSONDecodable>: JSONEncodable, JSONAssignable, JSONDecodable {
     public var array: [Element]
     
     public init() {
@@ -99,7 +99,7 @@ extension Array where Element: JSONEncodable {
 /**
  This type serves as a thunk between `JSONEncodable` and `Dictionary`.
 */
-public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable, JSONSettable {
+public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable, JSONAssignable {
     public var dictionary: [String: Value]
     
     public init() {
@@ -118,7 +118,7 @@ public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable, JSON
 /**
  This type serves as a thunk between `JSONEncodable` and `JSONDecodable` on the one hand, and `Dictionary` on the other.
 */
-public struct JSONEncodableDecodableDictionary<Value: JSONEncodable where Value: JSONDecodable>: JSONEncodable, JSONSettable, JSONDecodable {
+public struct JSONEncodableDecodableDictionary<Value: JSONEncodable where Value: JSONDecodable>: JSONEncodable, JSONAssignable, JSONDecodable {
     public var dictionary: [String: Value]
     
     public init() {
