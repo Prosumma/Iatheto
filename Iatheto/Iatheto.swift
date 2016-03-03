@@ -153,6 +153,28 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     public typealias JSONDictionary = Swift.Dictionary<Swift.String, JSON>
     public typealias JSONArray = Swift.Array<JSON>
     
+    /**
+     Used for converting JSON strings into dates.
+    */
+    public static var encodingDateFormatter: NSDateFormatter = {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+        dateFormatter.timeZone = NSTimeZone(name: "UTC")
+        return dateFormatter
+    }()
+    
+    /**
+     Used for converting dates into JSON strings.
+    */
+    public static var decodingDateFormatter: NSDateFormatter = {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+        dateFormatter.timeZone = NSTimeZone(name: "UTC")
+        return dateFormatter
+    }()
+    
     case Null
     case String(Swift.String)
     case Number(NSNumber)
@@ -226,6 +248,37 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
         set {
             self = .String(newValue)
+        }
+    }
+
+    public func dateWithFormatter(formatter: NSDateFormatter) -> NSDate? {
+        guard let string = self.string else { return nil }
+        return formatter.dateFromString(string)
+    }
+    
+    public mutating func setDate(date: NSDate?, withFormatter formatter: NSDateFormatter) {
+        guard let date = date else {
+            self = .Null
+            return
+        }
+        self = .String(formatter.stringFromDate(date))
+    }
+    
+    public var date: NSDate? {
+        get {
+            return dateWithFormatter(JSON.encodingDateFormatter)
+        }
+        set {
+            setDate(newValue, withFormatter: JSON.decodingDateFormatter)
+        }
+    }
+    
+    public var dateValue: NSDate {
+        get {
+            return date ?? NSDate()
+        }
+        set {
+            date = newValue
         }
     }
     
