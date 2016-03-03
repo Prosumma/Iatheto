@@ -310,7 +310,7 @@ extension Float: JSONEncodable, JSONAssignable, JSONDecodable {
     }
 }
 
-public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible {
+public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible, JSONEncodable, JSONAssignable, JSONDecodable {
     public typealias JSONDictionary = Swift.Dictionary<Swift.String, JSON>
     public typealias JSONArray = Swift.Array<JSON>
     
@@ -355,6 +355,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         self = .Dictionary([:])
     }
     
+    public init(json: JSON) throws {
+        self = json
+    }
+    
     public init(data: NSData) throws {
         self = try JSON(NSJSONSerialization.JSONObjectWithData(data, options: []))
     }
@@ -389,6 +393,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         } else {
             throw JSONError.UnknownType(value)
         }
+    }
+    
+    public mutating func setWithJSON(json: JSON) throws {
+        self = json
     }
     
     public var string: Swift.String? {
@@ -592,6 +600,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public func rawData(options: NSJSONWritingOptions = []) throws -> NSData {
         return try NSJSONSerialization.dataWithJSONObject(value, options: options)
+    }
+    
+    public func decode() -> JSON {
+        return self
     }
     
     public var description: Swift.String {
