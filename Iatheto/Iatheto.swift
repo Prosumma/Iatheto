@@ -19,7 +19,7 @@ public protocol JSONEncodable {
 }
 
 public protocol JSONAssignable {
-    mutating func setWithJSON(json: JSON) throws
+    mutating func assign(json: JSON) throws
 }
 
 public protocol JSONDecodable {
@@ -44,7 +44,7 @@ public struct JSONEncodableArray<Element: JSONEncodable>: JSONEncodable, JSONAss
         return try self.init(json: json)
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         array = try [Element].encode(json)
     }
 }
@@ -75,7 +75,7 @@ public struct JSONEncodableDecodableArray<Element: JSONEncodable where Element: 
         return try self.init(json: json)
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         array = try [Element].encode(json)
     }
 }
@@ -105,13 +105,13 @@ extension Array where Element: JSONEncodable {
 }
 
 extension Array where Element: JSONAssignable {
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         guard case .Array(let array) = json else {
             throw JSONError.UnexpectedType(json)
         }
         if array.count != count { throw JSONError.UnequalCollections }
         for e in 0..<count {
-            try self[e].setWithJSON(array[e])
+            try self[e].assign(array[e])
         }
     }
 }
@@ -134,7 +134,7 @@ public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable, JSON
         return try self.init(json: json)
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         dictionary = try [String: Value](json: json)
     }
 }
@@ -157,7 +157,7 @@ public struct JSONEncodableDecodableDictionary<Value: JSONEncodable where Value:
         dictionary = try [String: Value](json: json)
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         dictionary = try [String: Value](json: json)
     }
     
@@ -198,7 +198,7 @@ extension Dictionary where Value: JSONEncodable {
 }
 
 extension Dictionary where Value: JSONAssignable {
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         guard case .Dictionary(let dictionary) = json else {
             throw JSONError.UnexpectedType(json)
         }
@@ -206,7 +206,7 @@ extension Dictionary where Value: JSONAssignable {
             guard let json = dictionary[String(key)] else {
                 throw JSONError.UnequalCollections
             }
-            try self[key]?.setWithJSON(json)
+            try self[key]?.assign(json)
         }
     }
 }
@@ -228,7 +228,7 @@ extension SequenceType where Generator.Element: JSONDecodable {
 }
 
 extension NSNull: JSONAssignable, JSONDecodable {
-    public func setWithJSON(json: JSON) throws {
+    public func assign(json: JSON) throws {
         guard case .Null = json else {
             throw JSONError.UnexpectedType(json)
         }
@@ -247,7 +247,7 @@ extension String: JSONEncodable, JSONAssignable, JSONDecodable {
         self = string
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         guard case .String(let string) = json else {
             throw JSONError.UnexpectedType(json)
         }
@@ -277,7 +277,7 @@ extension Int: JSONEncodable, JSONAssignable, JSONDecodable {
         self = int
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         guard let int = json.int else {
             throw JSONError.UnexpectedType(json)
         }
@@ -301,7 +301,7 @@ extension Double: JSONEncodable, JSONAssignable, JSONDecodable {
         self = double
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         guard let double = json.double else {
             throw JSONError.UnexpectedType(json)
         }
@@ -325,7 +325,7 @@ extension Float: JSONEncodable, JSONAssignable, JSONDecodable {
         self = float
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         guard let float = json.float else {
             throw JSONError.UnexpectedType(json)
         }
@@ -426,7 +426,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public mutating func setWithJSON(json: JSON) throws {
+    public mutating func assign(json: JSON) throws {
         self = json
     }
     
