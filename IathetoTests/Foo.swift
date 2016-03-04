@@ -26,6 +26,10 @@ struct Foo: JSONEncodable, JSONAssignable, JSONDecodable, Equatable {
         name = json["name"].string!
     }
     
+    static func encode(json: JSON) throws -> Foo {
+        return try self.init(json: json)
+    }
+    
     func decode() -> JSON {
         var json = JSON()
         json["name"].string = name

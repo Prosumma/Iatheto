@@ -15,7 +15,7 @@ public enum JSONError: ErrorType {
 }
 
 public protocol JSONEncodable {
-    init(json: JSON) throws
+    static func encode(json: JSON) throws -> Self
 }
 
 public protocol JSONAssignable {
@@ -37,11 +37,15 @@ public struct JSONEncodableArray<Element: JSONEncodable>: JSONEncodable, JSONAss
     }
     
     public init(json: JSON) throws {
-        array = try [Element](json: json)
+        array = try [Element].encode(json)
+    }
+    
+    public static func encode(json: JSON) throws -> JSONEncodableArray {
+        return try self.init(json: json)
     }
     
     public mutating func setWithJSON(json: JSON) throws {
-        array = try [Element](json: json)
+        array = try [Element].encode(json)
     }
 }
 
@@ -60,15 +64,19 @@ public struct JSONEncodableDecodableArray<Element: JSONEncodable where Element: 
     }
     
     public init(json: JSON) throws {
-        array = try [Element](json: json)
+        array = try [Element].encode(json)
     }
     
     public func decode() -> JSON {
         return array.decode()
     }
     
+    public static func encode(json: JSON) throws -> JSONEncodableDecodableArray {
+        return try self.init(json: json)
+    }
+    
     public mutating func setWithJSON(json: JSON) throws {
-        array = try [Element](json: json)
+        array = try [Element].encode(json)
     }
 }
 
@@ -88,12 +96,11 @@ public struct JSONDecodableSequence: JSONDecodable {
 }
 
 extension Array where Element: JSONEncodable {
-    public init(json: JSON) throws {
+    public static func encode(json: JSON) throws -> Array {
         guard case .Array(let array) = json else {
             throw JSONError.UnexpectedType(json)
         }
-        let elements = try array.map { try Element(json: $0) }
-        self.init(elements)
+        return try self.init(array.map { try Element.encode($0) })
     }
 }
 
@@ -123,6 +130,10 @@ public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable, JSON
         dictionary = try [String: Value](json: json)
     }
     
+    public static func encode(json: JSON) throws -> JSONEncodableDictionary {
+        return try self.init(json: json)
+    }
+    
     public mutating func setWithJSON(json: JSON) throws {
         dictionary = try [String: Value](json: json)
     }
@@ -148,6 +159,10 @@ public struct JSONEncodableDecodableDictionary<Value: JSONEncodable where Value:
     
     public mutating func setWithJSON(json: JSON) throws {
         dictionary = try [String: Value](json: json)
+    }
+    
+    public static func encode(json: JSON) throws -> JSONEncodableDecodableDictionary {
+        return try self.init(json: json)
     }
 
     public func decode() -> JSON {
@@ -177,7 +192,7 @@ extension Dictionary where Value: JSONEncodable {
         }
         self.init()
         for (key, json) in dictionary {
-            self[key as! Key] = try Value(json: json)
+            self[key as! Key] = try Value.encode(json)
         }
     }
 }
@@ -239,6 +254,10 @@ extension String: JSONEncodable, JSONAssignable, JSONDecodable {
         self = string
     }
     
+    public static func encode(json: JSON) throws -> String {
+        return try self.init(json: json)
+    }
+    
     public func decode() -> JSON {
         return .String(self)
     }
@@ -265,6 +284,10 @@ extension Int: JSONEncodable, JSONAssignable, JSONDecodable {
         self = int
     }
     
+    public static func encode(json: JSON) throws -> Int {
+        return try self.init(json: json)
+    }
+    
     public func decode() -> JSON {
         return .Number(NSNumber(integer: self))
     }
@@ -285,6 +308,10 @@ extension Double: JSONEncodable, JSONAssignable, JSONDecodable {
         self = double
     }
     
+    public static func encode(json: JSON) throws -> Double {
+        return try self.init(json: json)
+    }
+    
     public func decode() -> JSON {
         return .Number(NSNumber(double: self))
     }
@@ -303,6 +330,10 @@ extension Float: JSONEncodable, JSONAssignable, JSONDecodable {
             throw JSONError.UnexpectedType(json)
         }
         self = float
+    }
+    
+    public static func encode(json: JSON) throws -> Float {
+        return try self.init(json: json)
     }
     
     public func decode() -> JSON {
@@ -600,6 +631,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public func rawData(options: NSJSONWritingOptions = []) throws -> NSData {
         return try NSJSONSerialization.dataWithJSONObject(value, options: options)
+    }
+    
+    public static func encode(json: JSON) throws -> JSON {
+        return try self.init(json: json)
     }
     
     public func decode() -> JSON {

@@ -22,7 +22,11 @@ struct Envelope<T: JSONEncodable where T: JSONDecodable>: JSONEncodable, JSONDec
             self.content = nil
             return
         }
-        self.content = try T(json: content)
+        self.content = try T.encode(content)
+    }
+    
+    static func encode(json: JSON) throws -> Envelope {
+        return try self.init(json: json)
     }
 
     func decode() -> JSON {
