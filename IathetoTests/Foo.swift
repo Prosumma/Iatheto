@@ -22,7 +22,7 @@ struct Foo: JSONEncodable, JSONAssignable, JSONDecodable, Equatable {
         name = json["name"].string!
     }
     
-    mutating func setWithJSON(json: JSON) throws {
+    mutating func assign(json: JSON) throws {
         name = json["name"].string!
     }
     

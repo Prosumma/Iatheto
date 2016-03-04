@@ -27,7 +27,7 @@ class IathetoTests: XCTestCase {
         let jsonString = "[{\"name\": \"foo\"}]"
         let json = try! JSON(string: jsonString)
         var array = [Foo()]
-        try! array.setWithJSON(json)
+        try! array.assign(json)
         XCTAssertEqual(array[0].name, "foo")
     }
     
@@ -35,7 +35,7 @@ class IathetoTests: XCTestCase {
         let jsonString = "{\"foo\": {\"name\": \"bar\"}}"
         let json = try! JSON(string: jsonString)
         var dictionary = ["foo": Foo(name: "foo")]
-        try! dictionary.setWithJSON(json)
+        try! dictionary.assign(json)
         XCTAssertEqual(dictionary["foo"]!.name, "bar")
     }
     
