@@ -18,19 +18,19 @@ struct Foo: JSONEncodable, JSONAssignable, JSONDecodable, Equatable {
 
     init() {}
     
-    init(json: JSON) throws {
+    init(json: JSON, state: Any? = nil) throws {
         name = json["name"].string!
     }
     
-    mutating func assign(json: JSON) throws {
+    mutating func assign(json: JSON, state: Any? = nil) throws {
         name = json["name"].string!
     }
     
-    static func encode(json: JSON) throws -> Foo {
+    static func encode(json: JSON, state: Any? = nil) throws -> Foo {
         return try self.init(json: json)
     }
     
-    func decode() -> JSON {
+    func decode(state: Any?) -> JSON {
         var json = JSON()
         json["name"].string = name
         return json

@@ -16,7 +16,7 @@ struct Envelope<T: JSONEncodable where T: JSONDecodable>: JSONEncodable, JSONDec
         self.content = content
     }
     
-    init(json: JSON) throws {
+    init(json: JSON, state: Any? = nil) throws {
         let content = json["content"]
         if case .Null = content {
             self.content = nil
@@ -25,11 +25,11 @@ struct Envelope<T: JSONEncodable where T: JSONDecodable>: JSONEncodable, JSONDec
         self.content = try T.encode(content)
     }
     
-    static func encode(json: JSON) throws -> Envelope {
+    static func encode(json: JSON, state: Any?) throws -> Envelope {
         return try self.init(json: json)
     }
 
-    func decode() -> JSON {
+    func decode(state: Any? = nil) -> JSON {
         var json = JSON()
         if let content = content {
             json["content"] = content.decode()
