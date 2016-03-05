@@ -14,6 +14,10 @@ public enum JSONError: ErrorType {
     case UnequalCollections // for JSONAssignable with collections
 }
 
+/**
+ Decoding is the act of turning something from JSON
+ into a "concrete" type.
+*/
 public protocol JSONDecodable {
     static func decode(json: JSON, state: Any?) throws -> Self
 }
@@ -22,6 +26,9 @@ public protocol JSONAssignable {
     mutating func assign(json: JSON, state: Any?) throws
 }
 
+/**
+ Encoding is the act of turning something into JSON.
+*/
 public protocol JSONEncodable {
     func encode(state: Any?) -> JSON
 }
@@ -72,7 +79,7 @@ public struct JSONDecodableArray<Element: JSONDecodable>: JSONDecodable, JSONAss
 /**
  A thunk between `JSONDecodable`, `JSONEncodable`, and an underlying array.
  */
-public struct JSONEncodableDecodableArray<Element: JSONDecodable where Element: JSONEncodable>: JSONCodable, JSONAssignable {
+public struct JSONCodableArray<Element: JSONCodable>: JSONCodable, JSONAssignable {
     public var array: [Element]
     
     public init() {
@@ -91,7 +98,7 @@ public struct JSONEncodableDecodableArray<Element: JSONDecodable where Element: 
         return array.encode(state)
     }
     
-    public static func decode(json: JSON, state: Any?) throws -> JSONEncodableDecodableArray {
+    public static func decode(json: JSON, state: Any?) throws -> JSONCodableArray {
         return try self.init(json: json, state: state)
     }
     
@@ -162,7 +169,7 @@ public struct JSONDecodableDictionary<Value: JSONDecodable>: JSONDecodable, JSON
 /**
  This type serves as a thunk between `JSONDecodable` and `JSONEncodable` on the one hand, and `Dictionary` on the other.
 */
-public struct JSONEncodableDecodableDictionary<Value: JSONDecodable where Value: JSONEncodable>: JSONCodable, JSONAssignable {
+public struct JSONCodableDictionary<Value: JSONCodable>: JSONCodable, JSONAssignable {
     public var dictionary: [String: Value]
     
     public init() {
@@ -181,7 +188,7 @@ public struct JSONEncodableDecodableDictionary<Value: JSONDecodable where Value:
         dictionary = try [String: Value](json: json, state: state)
     }
     
-    public static func decode(json: JSON, state: Any?) throws -> JSONEncodableDecodableDictionary {
+    public static func decode(json: JSON, state: Any?) throws -> JSONCodableDictionary {
         return try self.init(json: json, state: state)
     }
 
@@ -238,6 +245,15 @@ extension Dictionary where Value: JSONEncodable {
             json[String(key)] = value.encode(state)
         }
         return json
+    }
+}
+
+extension Set where Element: JSONDecodable {
+    public static func decode(json: JSON, state: Any?) throws -> Set {
+        guard case .Array(let array) = json else {
+            throw JSONError.UnexpectedType(json)
+        }
+        return try self.init(array.map { try Element.decode($0, state: state) })
     }
 }
 
