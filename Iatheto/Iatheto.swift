@@ -377,7 +377,7 @@ extension Float: JSONCodable, JSONAssignable {
     }
 }
 
-public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible, JSONDecodable, JSONAssignable, JSONEncodable {
+public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible, JSONCodable, JSONAssignable {
     public typealias JSONDictionary = Swift.Dictionary<Swift.String, JSON>
     public typealias JSONArray = Swift.Array<JSON>
     
