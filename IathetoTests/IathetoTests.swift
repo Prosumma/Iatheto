@@ -13,7 +13,7 @@ class IathetoTests: XCTestCase {
     
     func testEncodingAndDecoding() {
         let envelope1 = Envelope<JSONEncodableDecodableArray<Foo>>(content: JSONEncodableDecodableArray([Foo(name: "foo"), Foo(name: "bar")]))
-        let json = envelope1.decode()
+        let json = envelope1.encode()
         print(json)
         do {
             let envelope2 = try Envelope<JSONEncodableDecodableArray<Foo>>(json: json)

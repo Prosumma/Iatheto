@@ -9,7 +9,7 @@
 import Foundation
 @testable import Iatheto
 
-struct Foo: JSONEncodable, JSONAssignable, JSONDecodable, Equatable {
+struct Foo: JSONCodable, JSONAssignable, Equatable {
     private(set) var name: String = ""
     
     init(name: String) {
@@ -26,11 +26,11 @@ struct Foo: JSONEncodable, JSONAssignable, JSONDecodable, Equatable {
         name = json["name"].string!
     }
     
-    static func encode(json: JSON, state: Any? = nil) throws -> Foo {
+    static func decode(json: JSON, state: Any? = nil) throws -> Foo {
         return try self.init(json: json)
     }
     
-    func decode(state: Any?) -> JSON {
+    func encode(state: Any?) -> JSON {
         var json = JSON()
         json["name"].string = name
         return json
