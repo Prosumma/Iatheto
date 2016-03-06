@@ -12,6 +12,7 @@ public enum JSONError: ErrorType {
     case UnknownType(AnyObject)
     case UnexpectedType(JSON)
     case UnequalCollections // for JSONAssignable with collections
+    case UnexpectedState(Any?) // Used by clients when an unexpected value for the state parameter is passed.
 }
 
 /**
