@@ -466,6 +466,31 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         self = json
     }
     
+    public mutating func merge(json: JSON) throws {
+        switch self {
+        case .Array(let array):
+            var this = array
+            if case .Array(let other) = json {
+                this.appendContentsOf(other)
+                self = .Array(this)
+            } else {
+                throw JSONError.UnexpectedType(json)
+            }
+        case .Dictionary(let dictionary):
+            var this = dictionary
+            if case .Dictionary(let other) = json {
+                for (key, value) in other {
+                    this[key] = value
+                }
+                self = .Dictionary(this)
+            } else {
+                throw JSONError.UnexpectedType(json)
+            }
+        default:
+            throw JSONError.UnexpectedType(self)
+        }
+    }
+    
     public var string: Swift.String? {
         get {
             if case .String(let string) = self {
