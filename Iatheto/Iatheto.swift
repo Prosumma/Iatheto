@@ -264,6 +264,12 @@ extension SequenceType where Generator.Element: JSONEncodable {
     }
 }
 
+extension SequenceType where Generator.Element == JSON {
+    public func decode<T: JSONDecodable>(state: Any? = nil) throws -> [T] {
+        return try self.map{ try T.decode($0, state: state) }
+    }
+}
+
 extension NSNull: JSONEncodable, JSONAssignable {
     public func assign(json: JSON, state: Any?) throws {
         guard case .Null = json else {
