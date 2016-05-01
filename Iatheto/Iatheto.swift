@@ -52,6 +52,15 @@ extension JSONEncodable {
     public func encode() -> JSON {
         return encode(nil)
     }
+    
+    public func encode(state: Any?) throws -> NSData {
+        let json: JSON = self.encode(state)
+        return try json.rawData()
+    }
+    
+    public func encode() throws -> NSData {
+        return try encode(nil)
+    }
 }
 
 /**
