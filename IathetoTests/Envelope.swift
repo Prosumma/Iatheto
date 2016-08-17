@@ -16,17 +16,14 @@ struct Envelope<T: JSONCodable>: JSONCodable {
         self.content = content
     }
     
-    init(json: JSON) throws {
+    init?(json: JSON, state: Any? = nil) {
         let content = json["content"]
-        if case .Null = content {
-            self.content = nil
-            return
-        }
-        self.content = try T.decode(content)
+        if case .Null = content { return nil }
+        self.content = T.decode(content)
     }
     
-    static func decode(json: JSON, state: Any?) throws -> Envelope {
-        return try self.init(json: json)
+    static func decode(json: JSON, state: Any?) -> Envelope? {
+        return self.init(json: json, state: state)
     }
 
     func encode(state: Any? = nil) -> JSON {

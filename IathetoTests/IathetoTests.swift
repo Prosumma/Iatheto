@@ -15,12 +15,9 @@ class IathetoTests: XCTestCase {
         let envelope1 = Envelope<JSONCodableArray<Foo>>(content: JSONCodableArray([Foo(name: "foo"), Foo(name: "bar")]))
         let json = envelope1.encode()
         print(json)
-        do {
-            let envelope2 = try Envelope<JSONCodableArray<Foo>>(json: json)
-            XCTAssertEqual(envelope1.content!.array[0], envelope2.content!.array[0])
-        } catch let e {
-            XCTAssert(false, String(e))
-        }
+        let envelope2 = Envelope<JSONCodableArray<Foo>>(json: json)
+        XCTAssertNotNil(envelope2)
+        XCTAssertEqual(envelope1.content!.array[0], envelope2!.content!.array[0])
     }
     
     func testAssignableArray() {

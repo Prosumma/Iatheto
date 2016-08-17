@@ -18,7 +18,7 @@ struct Foo: JSONCodable, JSONAssignable, Equatable {
 
     init() {}
     
-    init(json: JSON, state: Any? = nil) throws {
+    init?(json: JSON, state: Any? = nil) {
         name = json["name"].string!
     }
     
@@ -26,8 +26,8 @@ struct Foo: JSONCodable, JSONAssignable, Equatable {
         name = json["name"].string!
     }
     
-    static func decode(json: JSON, state: Any? = nil) throws -> Foo {
-        return try self.init(json: json)
+    static func decode(json: JSON, state: Any? = nil) -> Foo? {
+        return self.init(json: json, state: state)
     }
     
     func encode(state: Any?) -> JSON {
