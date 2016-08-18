@@ -359,6 +359,22 @@ extension Dictionary where Value: JSONEncodable {
     }
 }
 
+extension Set where Element: JSONDecodable {
+    public static func decode(json: JSON, state: Any? = nil) -> Set? {
+        if case .Array(let array) = json {
+            var elements = Array<Generator.Element>()
+            for json in array {
+                if let element = Generator.Element.decode(json, state: state) {
+                    elements.append(element)
+                }
+            }
+            return self.init(elements)
+        } else {
+            return nil
+        }
+    }
+}
+
 extension NSNull: JSONEncodable, JSONAssignable {
     public func assign(json: JSON, state: Any?) throws {
         guard case .Null = json else {
