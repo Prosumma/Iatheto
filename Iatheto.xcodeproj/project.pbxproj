@@ -241,9 +241,11 @@
 					};
 					F3591FD81C8608D900DD13F5 = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0820;
 					};
 					F3591FE11C8608D900DD13F5 = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0820;
 					};
 				};
 			};
@@ -528,6 +530,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -550,6 +553,7 @@
 				PRODUCT_NAME = Iatheto;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -564,6 +568,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
 				PRODUCT_NAME = IathetoTests;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -578,6 +583,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
 				PRODUCT_NAME = IathetoTests;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
