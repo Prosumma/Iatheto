@@ -233,9 +233,11 @@
 				TargetAttributes = {
 					F3591FB91C86077500DD13F5 = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0820;
 					};
 					F3591FC31C86077500DD13F5 = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0820;
 					};
 					F3591FD81C8608D900DD13F5 = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -454,6 +456,7 @@
 				PRODUCT_NAME = Iatheto;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -472,6 +475,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.Iatheto;
 				PRODUCT_NAME = Iatheto;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -482,6 +486,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
 				PRODUCT_NAME = IathetoTests;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -492,6 +497,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
 				PRODUCT_NAME = IathetoTests;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
