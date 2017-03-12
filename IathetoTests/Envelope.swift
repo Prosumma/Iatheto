@@ -22,11 +22,11 @@ struct Envelope<T: JSONCodable>: JSONCodable {
         self.content = T.decode(content)
     }
     
-    static func decode(json: JSON, state: Any?) -> Envelope? {
+    static func decode(_ json: JSON, state: Any?) -> Envelope? {
         return self.init(json: json, state: state)
     }
 
-    func encode(state: Any? = nil) -> JSON {
+    func encode(_ state: Any? = nil) -> JSON {
         var json = JSON()
         if let content = content {
             json["content"] = content.encode()

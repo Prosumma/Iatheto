@@ -8,10 +8,10 @@
 
 import Foundation
 
-public enum JSONError: ErrorType {
-    case UnknownType(AnyObject)
-    case UnexpectedType(JSON)
-    case UnequalCollections // for JSONAssignable with collections
+public enum JSONError: Error {
+    case unknownType(Any)
+    case unexpectedType(JSON)
+    case unequalCollections // for JSONAssignable with collections
 }
 
 /**
@@ -25,7 +25,7 @@ public enum JSONError: ErrorType {
  runtime assertion.
 */
 public protocol JSONDecodable {
-    static func decode(json: JSON, state: Any?) -> Self?
+    static func decode(_ json: JSON, state: Any?) -> Self?
 }
 
 /**
@@ -40,7 +40,7 @@ public protocol JSONDecodable {
  should fail a runtime assertion.
 */
 public protocol JSONAssignable {
-    mutating func assign(json: JSON, state: Any?) throws
+    mutating func assign(_ json: JSON, state: Any?) throws
 }
 
 /**
@@ -52,19 +52,19 @@ public protocol JSONAssignable {
  either return `JSON.Null` or fail a runtime assertion.
 */
 public protocol JSONEncodable {
-    func encode(state: Any?) -> JSON
+    func encode(_ state: Any?) -> JSON
 }
 
 public protocol JSONCodable: JSONEncodable, JSONDecodable {}
 
 extension JSONDecodable {
-    public static func decode(json: JSON) -> Self? {
+    public static func decode(_ json: JSON) -> Self? {
         return decode(json, state: nil)
     }
 }
 
 extension JSONAssignable {
-    public mutating func assign(json: JSON) throws {
+    public mutating func assign(_ json: JSON) throws {
         try assign(json, state: nil)
     }
 }
@@ -74,12 +74,12 @@ extension JSONEncodable {
         return encode(nil)
     }
     
-    public func encode(state: Any?) throws -> NSData {
+    public func encode(_ state: Any?) throws -> Data {
         let json: JSON = self.encode(state)
         return try json.rawData()
     }
     
-    public func encode() throws -> NSData {
+    public func encode() throws -> Data {
         return try encode(nil)
     }
 }
@@ -102,15 +102,15 @@ public struct JSONDecodableArray<Element: JSONDecodable>: JSONDecodable, JSONAss
         }
     }
     
-    public static func decode(json: JSON, state: Any?) -> JSONDecodableArray? {
+    public static func decode(_ json: JSON, state: Any?) -> JSONDecodableArray? {
         return self.init(json: json, state: state)
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         if let array = [Element].decode(json, state: state) {
             self.array = array
         } else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
     }
 }
@@ -137,19 +137,19 @@ public struct JSONCodableArray<Element: JSONCodable>: JSONCodable, JSONAssignabl
         }
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(_ state: Any?) -> JSON {
         return array.encode(state)
     }
     
-    public static func decode(json: JSON, state: Any?) -> JSONCodableArray? {
+    public static func decode(_ json: JSON, state: Any?) -> JSONCodableArray? {
         return self.init(json: json, state: state)
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         if let array = [Element].decode(json, state: state) {
             self.array = array
         } else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
     }
 }
@@ -158,13 +158,13 @@ public struct JSONCodableArray<Element: JSONCodable>: JSONCodable, JSONAssignabl
  A thunk between `JSONEncodable` and an underlying sequence.
  */
 public struct JSONEncodableSequence: JSONEncodable {
-    private let thunk: Any? -> JSON
+    fileprivate let thunk: (Any?) -> JSON
     
-    public init<S: SequenceType where S.Generator.Element: JSONEncodable>(_ sequence: S) {
+    public init<S: Sequence>(_ sequence: S) where S.Iterator.Element: JSONEncodable {
         thunk = { state in sequence.encode(state) }
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(_ state: Any?) -> JSON {
         return thunk(state)
     }
 }
@@ -187,15 +187,15 @@ public struct JSONDecodableDictionary<Value: JSONDecodable>: JSONDecodable, JSON
         }
     }
     
-    public static func decode(json: JSON, state: Any?) -> JSONDecodableDictionary? {
+    public static func decode(_ json: JSON, state: Any?) -> JSONDecodableDictionary? {
         return self.init(json: json, state: state)
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         if let dictionary = [String: Value](json: json, state: state) {
             self.dictionary = dictionary
         } else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
     }
 }
@@ -222,19 +222,19 @@ public struct JSONCodableDictionary<Value: JSONCodable>: JSONCodable, JSONAssign
         }
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         if let dictionary = [String: Value](json: json, state: state) {
             self.dictionary = dictionary
         } else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
     }
     
-    public static func decode(json: JSON, state: Any?) -> JSONCodableDictionary? {
+    public static func decode(_ json: JSON, state: Any?) -> JSONCodableDictionary? {
         return self.init(json: json, state: state)
     }
 
-    public func encode(state: Any?) -> JSON {
+    public func encode(_ state: Any?) -> JSON {
         return dictionary.encode(state)
     }
 }
@@ -249,41 +249,41 @@ public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable {
         self.dictionary = dictionary
     }
 
-    public func encode(state: Any?) -> JSON {
+    public func encode(_ state: Any?) -> JSON {
         return dictionary.encode(state)
     }
 }
 
 extension Optional where Wrapped: JSONEncodable {
-    public func encode(state: Any? = nil) -> JSON {
+    public func encode(_ state: Any? = nil) -> JSON {
         return self?.encode(state) ?? .Null
     }
 }
 
 extension Optional where Wrapped: JSONDecodable {
-    public static func decode(json: JSON, state: Any? = nil) -> Wrapped? {
+    public static func decode(_ json: JSON, state: Any? = nil) -> Wrapped? {
         return Wrapped.decode(json, state: state)
     }
 }
 
 extension Optional where Wrapped: JSONAssignable {
-    public mutating func assign(json: JSON, state: Any? = nil) throws {
+    public mutating func assign(_ json: JSON, state: Any? = nil) throws {
         try self?.assign(json, state: state)
     }
 }
 
-extension SequenceType where Generator.Element: JSONEncodable {
-    public func encode(state: Any? = nil) -> JSON {
+extension Sequence where Iterator.Element: JSONEncodable {
+    public func encode(_ state: Any? = nil) -> JSON {
         return .Array(map { $0.encode(state) })
     }
 }
 
-extension SequenceType where Generator.Element: JSONDecodable {
-    public static func decode(json: JSON, state: Any? = nil) -> [Generator.Element]? {
+extension Sequence where Iterator.Element: JSONDecodable {
+    public static func decode(_ json: JSON, state: Any? = nil) -> [Iterator.Element]? {
         if case .Array(let array) = json {
-            var elements = Array<Generator.Element>()
+            var elements = Array<Iterator.Element>()
             for json in array {
-                if let element = Generator.Element.decode(json, state: state) {
+                if let element = Iterator.Element.decode(json, state: state) {
                     elements.append(element)
                 }
             }
@@ -294,8 +294,8 @@ extension SequenceType where Generator.Element: JSONDecodable {
     }
 }
 
-extension SequenceType where Generator.Element == JSON {
-    public func decode<T: JSONDecodable>(state: Any? = nil) -> [T]? {
+extension Sequence where Iterator.Element == JSON {
+    public func decode<T: JSONDecodable>(_ state: Any? = nil) -> [T]? {
         var elements = [T]()
         for json in self {
             if let element = T.decode(json, state: state) {
@@ -306,13 +306,13 @@ extension SequenceType where Generator.Element == JSON {
     }
 }
 
-extension CollectionType where Self: MutableCollectionType, Generator.Element: JSONAssignable, Index == Int, Index.Distance == Int {
-    public mutating func assign(json: JSON, state: Any? = nil) throws {
+extension Collection where Self: MutableCollection, Iterator.Element: JSONAssignable, Index == Int, IndexDistance == Int {
+    public mutating func assign(_ json: JSON, state: Any? = nil) throws {
         guard case .Array(let array) = json else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
         if count != array.count {
-            throw JSONError.UnequalCollections
+            throw JSONError.unequalCollections
         }
         for i in 0..<count {
             try self[i].assign(array[i], state: state)
@@ -336,13 +336,13 @@ extension Dictionary where Value: JSONDecodable {
 }
 
 extension Dictionary where Value: JSONAssignable {
-    public mutating func assign(json: JSON, state: Any? = nil) throws {
+    public mutating func assign(_ json: JSON, state: Any? = nil) throws {
         guard case .Dictionary(let dictionary) = json else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
         for key in keys {
-            guard let json = dictionary[String(key)] else {
-                throw JSONError.UnequalCollections
+            guard let json = dictionary[String(describing: key)] else {
+                throw JSONError.unequalCollections
             }
             try self[key]?.assign(json, state: state)
         }
@@ -350,21 +350,21 @@ extension Dictionary where Value: JSONAssignable {
 }
 
 extension Dictionary where Value: JSONEncodable {
-    public func encode(state: Any? = nil) -> JSON {
+    public func encode(_ state: Any? = nil) -> JSON {
         var json = JSON()
         for (key, value) in self {
-            json[String(key)] = value.encode(state)
+            json[String(describing: key)] = value.encode(state)
         }
         return json
     }
 }
 
 extension Set where Element: JSONDecodable {
-    public static func decode(json: JSON, state: Any? = nil) -> Set? {
+    public static func decode(_ json: JSON, state: Any? = nil) -> Set? {
         if case .Array(let array) = json {
-            var elements = Array<Generator.Element>()
+            var elements = Array<Iterator.Element>()
             for json in array {
-                if let element = Generator.Element.decode(json, state: state) {
+                if let element = Iterator.Element.decode(json, state: state) {
                     elements.append(element)
                 }
             }
@@ -376,13 +376,13 @@ extension Set where Element: JSONDecodable {
 }
 
 extension NSNull: JSONEncodable, JSONAssignable {
-    public func assign(json: JSON, state: Any?) throws {
+    public func assign(_ json: JSON, state: Any?) throws {
         guard case .Null = json else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(_ state: Any?) -> JSON {
         return .Null
     }
 }
@@ -395,24 +395,24 @@ extension String: JSONCodable, JSONAssignable {
         self = string
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         guard case .String(let string) = json else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
         self = string
     }
     
-    public static func decode(json: JSON, state: Any?) -> String? {
+    public static func decode(_ json: JSON, state: Any?) -> String? {
         return self.init(json: json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(_ state: Any?) -> JSON {
         return .String(self)
     }
 }
 
 extension NSNumber: JSONEncodable {
-    public func encode(state: Any?) -> JSON {
+    public func encode(_ state: Any?) -> JSON {
         return .Number(self)
     }
 }
@@ -425,19 +425,19 @@ extension Int: JSONCodable, JSONAssignable {
         self = int
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         guard let int = json.int else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
         self = int
     }
     
-    public static func decode(json: JSON, state: Any?) -> Int? {
+    public static func decode(_ json: JSON, state: Any?) -> Int? {
         return self.init(json: json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
-        return .Number(NSNumber(integer: self))
+    public func encode(_ state: Any?) -> JSON {
+        return .Number(NSNumber(value: self as Int))
     }
 }
 
@@ -449,19 +449,19 @@ extension Double: JSONCodable, JSONAssignable {
         self = double
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         guard let double = json.double else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
         self = double
     }
     
-    public static func decode(json: JSON, state: Any?) -> Double? {
+    public static func decode(_ json: JSON, state: Any?) -> Double? {
         return self.init(json: json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
-        return .Number(NSNumber(double: self))
+    public func encode(_ state: Any?) -> JSON {
+        return .Number(NSNumber(value: self as Double))
     }
 }
 
@@ -473,19 +473,19 @@ extension Float: JSONCodable, JSONAssignable {
         self = float
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         guard let float = json.float else {
-            throw JSONError.UnexpectedType(json)
+            throw JSONError.unexpectedType(json)
         }
         self = float
     }
     
-    public static func decode(json: JSON, state: Any?) -> Float? {
+    public static func decode(_ json: JSON, state: Any?) -> Float? {
         return self.init(json: json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
-        return .Number(NSNumber(float: self))
+    public func encode(_ state: Any?) -> JSON {
+        return .Number(NSNumber(value: self as Float))
     }
 }
 
@@ -496,31 +496,31 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     /**
      Used for converting JSON strings into numbers.
     */
-    public static var encodingNumberFormatter: NSNumberFormatter = {
-        let numberFormatter = NSNumberFormatter()
-        numberFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+    public static var encodingNumberFormatter: NumberFormatter = {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.locale = Locale(identifier: "en_US_POSIX")
         return numberFormatter
     }()
     
     /**
      Used for converting JSON strings into dates.
     */
-    public static var encodingDateFormatter: NSDateFormatter = {
-        let dateFormatter = NSDateFormatter()
+    public static var encodingDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
-        dateFormatter.timeZone = NSTimeZone(name: "UTC")
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
         return dateFormatter
     }()
     
     /**
      Used for converting dates into JSON strings.
     */
-    public static var decodingDateFormatter: NSDateFormatter = {
-        let dateFormatter = NSDateFormatter()
+    public static var decodingDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
-        dateFormatter.timeZone = NSTimeZone(name: "UTC")
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
         return dateFormatter
     }()
     
@@ -538,34 +538,34 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         self = json
     }
     
-    public init<S: SequenceType where S.Generator.Element == JSON>(sequence: S) {
+    public init<S: Sequence>(sequence: S) where S.Iterator.Element == JSON {
         self = .Array(JSONArray(sequence))
     }
     
-    public init(data: NSData) throws {
-        self = try JSON(NSJSONSerialization.JSONObjectWithData(data, options: []))
+    public init(data: Data) throws {
+        self = try JSON(JSONSerialization.jsonObject(with: data, options: []))
     }
     
     /**
      Initializes `JSON` with a string containing well-formed JSON.
     */
     public init(string: Swift.String) throws {
-        try self.init(data: string.dataUsingEncoding(NSUTF8StringEncoding)!)
+        try self.init(data: string.data(using: Swift.String.Encoding.utf8)!)
     }
     
-    public init(_ value: AnyObject?) throws {
+    public init(_ value: Any?) throws {
         guard let value = value else {
             self = .Null
             return
         }
         
-        if let dictionary = value as? [Swift.String: AnyObject] {
+        if let dictionary = value as? [Swift.String: Any] {
             var json = JSONDictionary()
             for (key, value) in dictionary {
                 json[key] = try JSON(value)
             }
             self = .Dictionary(json)
-        } else if let array = value as? [AnyObject] {
+        } else if let array = value as? [Any] {
             self = .Array(try array.map { try JSON($0) })
         } else if let string = value as? Swift.String {
             self = .String(string)
@@ -574,23 +574,23 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         } else if value is NSNull {
             self = .Null
         } else {
-            throw JSONError.UnknownType(value)
+            throw JSONError.unknownType(value)
         }
     }
     
-    public mutating func assign(json: JSON, state: Any?) throws {
+    public mutating func assign(_ json: JSON, state: Any?) throws {
         self = json
     }
     
-    public mutating func merge(json: JSON) throws {
+    public mutating func merge(_ json: JSON) throws {
         switch self {
         case .Array(let array):
             var this = array
             if case .Array(let other) = json {
-                this.appendContentsOf(other)
+                this.append(contentsOf: other)
                 self = .Array(this)
             } else {
-                throw JSONError.UnexpectedType(json)
+                throw JSONError.unexpectedType(json)
             }
         case .Dictionary(let dictionary):
             var this = dictionary
@@ -600,10 +600,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
                 }
                 self = .Dictionary(this)
             } else {
-                throw JSONError.UnexpectedType(json)
+                throw JSONError.unexpectedType(json)
             }
         default:
-            throw JSONError.UnexpectedType(self)
+            throw JSONError.unexpectedType(self)
         }
     }
     
@@ -624,20 +624,20 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public func dateWithFormatter(formatter: NSDateFormatter) -> NSDate? {
+    public func dateWithFormatter(_ formatter: DateFormatter) -> Date? {
         guard let string = self.string else { return nil }
-        return formatter.dateFromString(string)
+        return formatter.date(from: string)
     }
     
-    public mutating func setDate(date: NSDate?, withFormatter formatter: NSDateFormatter) {
+    public mutating func setDate(_ date: Date?, withFormatter formatter: DateFormatter) {
         guard let date = date else {
             self = .Null
             return
         }
-        self = .String(formatter.stringFromDate(date))
+        self = .String(formatter.string(from: date))
     }
     
-    public var date: NSDate? {
+    public var date: Date? {
         get {
             return dateWithFormatter(JSON.encodingDateFormatter)
         }
@@ -650,7 +650,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         get {
             switch self {
             case .Number(let number): return number
-            case .String(let string): return JSON.encodingNumberFormatter.numberFromString(string)
+            case .String(let string): return JSON.encodingNumberFormatter.number(from: string)
             default: return nil
             }
         }
@@ -703,7 +703,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
         set {
             if let bool = newValue {
-                number = NSNumber(bool: bool)
+                number = NSNumber(value: bool)
             } else {
                 self = .Null
             }
@@ -712,11 +712,11 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public var int: Int? {
         get {
-            return number?.integerValue
+            return number?.intValue
         }
         set {
             if let int = newValue {
-                number = NSNumber(integer: int)
+                number = NSNumber(value: int)
             } else {
                 self = .Null
             }
@@ -729,7 +729,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
         set {
             if let double = newValue {
-                number = NSNumber(double: double)
+                number = NSNumber(value: double)
             } else {
                 self = .Null
             }
@@ -742,7 +742,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
         set {
             if let float = newValue {
-                number = NSNumber(float: float)
+                number = NSNumber(value: float)
             } else {
                 self = .Null
             }
@@ -787,7 +787,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    private var value: AnyObject {
+    fileprivate var value: Any {
         switch self {
         case .Null:
             return NSNull()
@@ -798,7 +798,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         case .Array(let array):
             return array.map { $0.value }
         case .Dictionary(let dictionary):
-            var object = Swift.Dictionary<Swift.String, AnyObject>()
+            var object = Swift.Dictionary<Swift.String, Any>()
             for (key, json) in dictionary {
                 object[key] = json.value
             }
@@ -806,21 +806,21 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public func rawData(options: NSJSONWritingOptions = []) throws -> NSData {
-        return try NSJSONSerialization.dataWithJSONObject(value, options: options)
+    public func rawData(_ options: JSONSerialization.WritingOptions = []) throws -> Data {
+        return try JSONSerialization.data(withJSONObject: value, options: options)
     }
     
-    public static func decode(json: JSON, state: Any?) -> JSON? {
+    public static func decode(_ json: JSON, state: Any?) -> JSON? {
         return self.init(json: json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(_ state: Any?) -> JSON {
         return self
     }
     
     public var description: Swift.String {
         do {
-            return try Swift.String(data: rawData(.PrettyPrinted), encoding: NSUTF8StringEncoding)!
+            return try Swift.String(data: rawData(.prettyPrinted), encoding: Swift.String.Encoding.utf8)!
         } catch _ {
             return ""
         }
@@ -832,57 +832,57 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
 }
 
-extension JSON: StringLiteralConvertible {
+extension JSON: ExpressibleByStringLiteral {
     
     public init(stringLiteral value: StringLiteralType) {
-        try! self.init(value)
+        try! self.init(value as Any?)
     }
     
     public init(extendedGraphemeClusterLiteral value: StringLiteralType) {
-        try! self.init(value)
+        try! self.init(value as Any?)
     }
     
     public init(unicodeScalarLiteral value: StringLiteralType) {
-        try! self.init(value)
+        try! self.init(value as Any?)
     }
     
 }
 
-extension JSON: IntegerLiteralConvertible {
+extension JSON: ExpressibleByIntegerLiteral {
     
     public init(integerLiteral value: IntegerLiteralType) {
-        try! self.init(value)
+        try! self.init(value as Any?)
     }
     
 }
 
-extension JSON: FloatLiteralConvertible {
+extension JSON: ExpressibleByFloatLiteral {
     
     public init(floatLiteral value: FloatLiteralType) {
-        try! self.init(value)
+        try! self.init(value as Any?)
     }
     
 }
 
-extension JSON: BooleanLiteralConvertible {
+extension JSON: ExpressibleByBooleanLiteral {
     
     public init(booleanLiteral value: BooleanLiteralType) {
-        try! self.init(value)
+        try! self.init(value as Any?)
     }
     
 }
 
-extension JSON: ArrayLiteralConvertible {
+extension JSON: ExpressibleByArrayLiteral {
     
-    public init(arrayLiteral elements: AnyObject...) {
-        try! self.init(elements)
+    public init(arrayLiteral elements: Any...) {
+        try! self.init(elements as Any?)
     }
     
 }
 
-extension JSON: DictionaryLiteralConvertible {
+extension JSON: ExpressibleByDictionaryLiteral {
     
-    public init(dictionaryLiteral elements: (Swift.String, AnyObject)...) {
+    public init(dictionaryLiteral elements: (Swift.String, Any)...) {
         var dictionary = JSONDictionary()
         for element in elements {
             dictionary[element.0] = try! JSON(element.1)
@@ -892,7 +892,7 @@ extension JSON: DictionaryLiteralConvertible {
     
 }
 
-extension JSON: NilLiteralConvertible {
+extension JSON: ExpressibleByNilLiteral {
     
     public init(nilLiteral: ()) {
         self = .Null
