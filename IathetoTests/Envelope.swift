@@ -18,7 +18,7 @@ struct Envelope<T: JSONCodable>: JSONCodable {
     
     init?(json: JSON, state: Any? = nil) {
         let content = json["content"]
-        if case .Null = content { return nil }
+        if case .null = content { return nil }
         self.content = T.decode(content)
     }
     

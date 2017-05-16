@@ -237,6 +237,7 @@
 					};
 					F3591FC31C86077500DD13F5 = {
 						CreatedOnToolsVersion = 7.2.1;
+						DevelopmentTeam = RWC7T4Z6DX;
 						LastSwiftMigration = 0820;
 					};
 					F3591FD81C8608D900DD13F5 = {
@@ -491,6 +492,7 @@
 		F3591FD21C86077500DD13F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = RWC7T4Z6DX;
 				INFOPLIST_FILE = IathetoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
@@ -502,6 +504,7 @@
 		F3591FD31C86077500DD13F5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = RWC7T4Z6DX;
 				INFOPLIST_FILE = IathetoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.IathetoTests;
