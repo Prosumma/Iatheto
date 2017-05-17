@@ -312,7 +312,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         self = .dictionary([:])
     }
     
-    public init?(json: JSON, state: Any? = nil) {
+    public init?(_ json: JSON, state: Any? = nil) {
         self = json
     }
     
@@ -585,7 +585,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     }
     
     public static func decode(_ json: JSON, state: Any?) throws -> JSON? {
-        return self.init(json: json, state: state)
+        return self.init(json, state: state)
     }
     
     public func encode(_ state: Any?) -> JSON {
