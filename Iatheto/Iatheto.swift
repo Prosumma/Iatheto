@@ -63,145 +63,6 @@ extension JSONEncodable {
     }
 }
 
-/**
- A thunk between `JSONDecodable` and an underlying array.
- */
-public struct JSONDecodableArray<Element: JSONDecodable>: JSONDecodable {
-    public var array: [Element]
-
-    public init() {
-        array = [Element]()
-    }
-    
-    public init?(json: JSON, state: Any?) {
-        if let array = [Element].decode(json, state: state) {
-            self.array = array
-        } else {
-            return nil
-        }
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) -> JSONDecodableArray? {
-        return self.init(json: json, state: state)
-    }
-    
-}
-
-/**
- A thunk between `JSONDecodable`, `JSONEncodable`, and an underlying array.
- */
-public struct JSONCodableArray<Element: JSONCodable>: JSONCodable {
-    public var array: [Element]
-    
-    public init() {
-        array = [Element]()
-    }
-    
-    public init(_ array: [Element]) {
-        self.array = array
-    }
-    
-    public init?(json: JSON, state: Any?) {
-        if let array = [Element].decode(json, state: state) {
-            self.array = array
-        } else {
-            return nil
-        }
-    }
-    
-    public func encode(_ state: Any?) -> JSON {
-        return array.encode(state)
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) -> JSONCodableArray? {
-        return self.init(json: json, state: state)
-    }
-}
-
-/**
- A thunk between `JSONEncodable` and an underlying sequence.
- */
-public struct JSONEncodableSequence: JSONEncodable {
-    fileprivate let thunk: (Any?) -> JSON
-    
-    public init<S: Sequence>(_ sequence: S) where S.Iterator.Element: JSONEncodable {
-        thunk = { state in sequence.encode(state) }
-    }
-    
-    public func encode(_ state: Any?) -> JSON {
-        return thunk(state)
-    }
-}
-
-/**
- This type serves as a thunk between `JSONDecodable` and `Dictionary`.
-*/
-public struct JSONDecodableDictionary<Value: JSONDecodable>: JSONDecodable {
-    public var dictionary: [String: Value]
-    
-    public init() {
-        dictionary = [:]
-    }
-    
-    public init?(json: JSON, state: Any?) {
-        if let dictionary = [String: Value](json: json, state: state) {
-            self.dictionary = dictionary
-        } else {
-            return nil
-        }
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) -> JSONDecodableDictionary? {
-        return self.init(json: json, state: state)
-    }
-}
-
-/**
- This type serves as a thunk between `JSONDecodable` and `JSONEncodable` on the one hand, and `Dictionary` on the other.
-*/
-public struct JSONCodableDictionary<Value: JSONCodable>: JSONCodable {
-    public var dictionary: [String: Value]
-    
-    public init() {
-        dictionary = [:]
-    }
-    
-    public init(_ dictionary: [String: Value]) {
-        self.dictionary = dictionary
-    }
-    
-    public init?(json: JSON, state: Any? = nil) {
-        if let dictionary = [String: Value](json: json, state: state) {
-            self.dictionary = dictionary
-        } else {
-            return nil
-        }
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) -> JSONCodableDictionary? {
-        return self.init(json: json, state: state)
-    }
-
-    public func encode(_ state: Any?) -> JSON {
-        return dictionary.encode(state)
-    }
-}
-
-/**
- This type serves as a thunk between `JSONEncodable` and `Dictionary`.
-*/
-public struct JSONEncodableDictionary<Value: JSONEncodable>: JSONEncodable {
-    public var dictionary: [String: Value]
-
-    public init(_ dictionary: [String: Value]) {
-        self.dictionary = dictionary
-    }
-
-    public func encode(_ state: Any?) -> JSON {
-        return dictionary.encode(state)
-    }
-}
-
 extension Optional where Wrapped: JSONEncodable {
     public func encode(_ state: Any? = nil) -> JSON {
         return self?.encode(state) ?? .null
@@ -610,6 +471,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         set {
             self = .null
         }
+    }
+    
+    public var isNull: Bool {
+        return null != nil
     }
     
     public subscript(index: Int) -> JSON {
