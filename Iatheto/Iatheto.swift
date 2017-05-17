@@ -272,6 +272,15 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     }()
     
     /**
+     Used for converting numbers into JSON strings.
+    */
+    public static var decodingNumberFormatter: NumberFormatter = {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.locale = Locale(identifier: "en_US_POSIX")
+        return numberFormatter
+    }()
+    
+    /**
      Used for converting JSON strings into dates.
     */
     public static var encodingDateFormatter: DateFormatter = {
