@@ -259,9 +259,6 @@ extension Float: JSONCodable {
 }
 
 public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible, JSONCodable {
-    public typealias JSONDictionary = Dictionary<String, JSON>
-    public typealias JSONArray = Array<JSON>
-    
     /**
      Used for converting JSON strings into numbers.
     */
@@ -305,8 +302,8 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     case null
     case string(String)
     case number(NSNumber)
-    case array(JSONArray)
-    case dictionary(JSONDictionary)
+    case array([JSON])
+    case dictionary([String: JSON])
     
     public init() {
         self = .dictionary([:])
@@ -317,7 +314,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     }
     
     public init<S: Sequence>(sequence: S) where S.Iterator.Element == JSON {
-        self = .array(JSONArray(sequence))
+        self = .array([JSON](sequence))
     }
     
     public init(data: Data) throws {
@@ -338,7 +335,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
         
         if let dictionary = value as? [String: Any] {
-            var json = JSONDictionary()
+            var json = [String: JSON]()
             for (key, value) in dictionary {
                 json[key] = try JSON(value)
             }
@@ -433,7 +430,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var array: JSONArray? {
+    public var array: [JSON]? {
         get {
             if case .array(let array) = self {
                 return array
@@ -450,7 +447,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var dictionary: JSONDictionary? {
+    public var dictionary: [String: JSON]? {
         get {
             if case .dictionary(let dictionary) = self {
                 return dictionary
@@ -657,7 +654,7 @@ extension JSON: ExpressibleByArrayLiteral {
 extension JSON: ExpressibleByDictionaryLiteral {
     
     public init(dictionaryLiteral elements: (String, Any)...) {
-        var dictionary = JSONDictionary()
+        var dictionary = [String: JSON]()
         for element in elements {
             dictionary[element.0] = try! JSON(element.1)
         }
