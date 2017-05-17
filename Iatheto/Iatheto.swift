@@ -100,7 +100,7 @@ extension Sequence where Iterator.Element: JSONDecodable {
 }
 
 extension Sequence where Iterator.Element == JSON {
-    public func decode<T: JSONDecodable>(_ state: Any? = nil) throws -> [T]? {
+    public func decode<T: JSONDecodable>(_ state: Any? = nil) throws -> [T] {
         var elements = [T]()
         for json in self {
             if let element = try T.decode(json, state: state) {
@@ -139,6 +139,16 @@ extension Dictionary where Key == String, Value: JSONEncodable {
             json[key] = value.encode(state)
         }
         return json
+    }
+}
+
+extension Dictionary where Value == JSON {
+    public func decode<T: JSONDecodable>(_ state: Any? = nil) throws -> [Key: T] {
+        var dictionary = [Key: T]()
+        for (key, json) in self {
+            dictionary[key] = try T.decode(json, state: state)
+        }
+        return dictionary
     }
 }
 
