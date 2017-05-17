@@ -259,8 +259,8 @@ extension Float: JSONCodable {
 }
 
 public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible, JSONCodable {
-    public typealias JSONDictionary = Swift.Dictionary<Swift.String, JSON>
-    public typealias JSONArray = Swift.Array<JSON>
+    public typealias JSONDictionary = Dictionary<String, JSON>
+    public typealias JSONArray = Array<JSON>
     
     /**
      Used for converting JSON strings into numbers.
@@ -327,8 +327,8 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     /**
      Initializes `JSON` with a string containing well-formed JSON.
     */
-    public init(string: Swift.String) throws {
-        try self.init(data: string.data(using: Swift.String.Encoding.utf8)!)
+    public init(string: String) throws {
+        try self.init(data: string.data(using: String.Encoding.utf8)!)
     }
     
     public init(_ value: Any?) throws {
@@ -337,7 +337,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             return
         }
         
-        if let dictionary = value as? [Swift.String: Any] {
+        if let dictionary = value as? [String: Any] {
             var json = JSONDictionary()
             for (key, value) in dictionary {
                 json[key] = try JSON(value)
@@ -345,7 +345,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             self = .dictionary(json)
         } else if let array = value as? [Any] {
             self = .array(try array.map { try JSON($0) })
-        } else if let string = value as? Swift.String {
+        } else if let string = value as? String {
             self = .string(string)
         } else if let number = value as? NSNumber {
             self = .number(number)
@@ -356,7 +356,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public var string: Swift.String? {
+    public var string: String? {
         get {
             if case .string(let string) = self {
                 return string
@@ -548,7 +548,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public subscript(key: Swift.String) -> JSON {
+    public subscript(key: String) -> JSON {
         get {
             if case .dictionary(let dictionary) = self {
                 return dictionary[key] ?? JSON.null
@@ -572,7 +572,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         case .array(let array):
             return array.map { $0.value }
         case .dictionary(let dictionary):
-            var object = Swift.Dictionary<Swift.String, Any>()
+            var object = [String: Any]()
             for (key, json) in dictionary {
                 object[key] = json.value
             }
@@ -592,15 +592,15 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         return self
     }
     
-    public var description: Swift.String {
+    public var description: String {
         do {
-            return try Swift.String(data: rawData(.prettyPrinted), encoding: Swift.String.Encoding.utf8)!
+            return try String(data: rawData(.prettyPrinted), encoding: String.Encoding.utf8)!
         } catch _ {
             return ""
         }
     }
     
-    public var debugDescription: Swift.String {
+    public var debugDescription: String {
         return description
     }
     
@@ -656,7 +656,7 @@ extension JSON: ExpressibleByArrayLiteral {
 
 extension JSON: ExpressibleByDictionaryLiteral {
     
-    public init(dictionaryLiteral elements: (Swift.String, Any)...) {
+    public init(dictionaryLiteral elements: (String, Any)...) {
         var dictionary = JSONDictionary()
         for element in elements {
             dictionary[element.0] = try! JSON(element.1)
