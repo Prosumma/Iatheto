@@ -11,7 +11,6 @@ import Foundation
 public enum JSONError: Error {
     case unknownType(Any)
     case unexpectedType(JSON)
-    case unequalCollections // for JSONAssignable with collections
 }
 
 /**
