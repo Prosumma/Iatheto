@@ -109,26 +109,30 @@ extension Sequence where Iterator.Element == JSON {
     }
 }
 
-extension Dictionary where Value: JSONDecodable {
-    public init?(json: JSON, state: Any? = nil) {
+extension Dictionary where Key == String, Value: JSONDecodable {
+    public init?(_ json: JSON, state: Any? = nil) {
         if case .dictionary(let dictionary) = json {
             self.init()
             for (key, json) in dictionary {
                 if let value = Value.decode(json, state: state) {
-                    self[key as! Key] = value
+                    self[key] = value
                 }
             }
         } else {
             return nil
         }
     }
+    
+    public static func decode(_ json: JSON, state: Any? = nil) -> Dictionary<Key, Value>? {
+        return self.init(json, state: state)
+    }
 }
 
-extension Dictionary where Value: JSONEncodable {
+extension Dictionary where Key == String, Value: JSONEncodable {
     public func encode(_ state: Any? = nil) -> JSON {
         var json = JSON()
         for (key, value) in self {
-            json[String(describing: key)] = value.encode(state)
+            json[key] = value.encode(state)
         }
         return json
     }
