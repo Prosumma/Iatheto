@@ -25,7 +25,7 @@ public enum JSONError: Error {
  runtime assertion.
 */
 public protocol JSONDecodable {
-    static func decode(_ json: JSON, state: Any?) -> Self?
+    static func decode(_ json: JSON, state: Any?) throws -> Self?
 }
 
 /**
@@ -43,8 +43,8 @@ public protocol JSONEncodable {
 public protocol JSONCodable: JSONEncodable, JSONDecodable {}
 
 extension JSONDecodable {
-    public static func decode(_ json: JSON) -> Self? {
-        return decode(json, state: nil)
+    public static func decode(_ json: JSON) throws -> Self? {
+        return try decode(json, state: nil)
     }
 }
 
@@ -70,8 +70,8 @@ extension Optional where Wrapped: JSONEncodable {
 }
 
 extension Optional where Wrapped: JSONDecodable {
-    public static func decode(_ json: JSON, state: Any? = nil) -> Wrapped? {
-        return Wrapped.decode(json, state: state)
+    public static func decode(_ json: JSON, state: Any? = nil) throws -> Wrapped? {
+        return try Wrapped.decode(json, state: state)
     }
 }
 
@@ -82,11 +82,11 @@ extension Sequence where Iterator.Element: JSONEncodable {
 }
 
 extension Sequence where Iterator.Element: JSONDecodable {
-    public static func decode(_ json: JSON, state: Any? = nil) -> [Iterator.Element]? {
+    public static func decode(_ json: JSON, state: Any? = nil) throws -> [Iterator.Element]? {
         if case .array(let array) = json {
             var elements = Array<Iterator.Element>()
             for json in array {
-                if let element = Iterator.Element.decode(json, state: state) {
+                if let element = try Iterator.Element.decode(json, state: state) {
                     elements.append(element)
                 }
             }
@@ -98,10 +98,10 @@ extension Sequence where Iterator.Element: JSONDecodable {
 }
 
 extension Sequence where Iterator.Element == JSON {
-    public func decode<T: JSONDecodable>(_ state: Any? = nil) -> [T]? {
+    public func decode<T: JSONDecodable>(_ state: Any? = nil) throws -> [T]? {
         var elements = [T]()
         for json in self {
-            if let element = T.decode(json, state: state) {
+            if let element = try T.decode(json, state: state) {
                 elements.append(element)
             }
         }
@@ -110,11 +110,11 @@ extension Sequence where Iterator.Element == JSON {
 }
 
 extension Dictionary where Key == String, Value: JSONDecodable {
-    public init?(_ json: JSON, state: Any? = nil) {
+    public init?(_ json: JSON, state: Any? = nil) throws {
         if case .dictionary(let dictionary) = json {
             self.init()
             for (key, json) in dictionary {
-                if let value = Value.decode(json, state: state) {
+                if let value = try Value.decode(json, state: state) {
                     self[key] = value
                 }
             }
@@ -123,8 +123,8 @@ extension Dictionary where Key == String, Value: JSONDecodable {
         }
     }
     
-    public static func decode(_ json: JSON, state: Any? = nil) -> Dictionary<Key, Value>? {
-        return self.init(json, state: state)
+    public static func decode(_ json: JSON, state: Any? = nil) throws -> Dictionary<Key, Value>? {
+        return try self.init(json, state: state)
     }
 }
 
@@ -139,11 +139,11 @@ extension Dictionary where Key == String, Value: JSONEncodable {
 }
 
 extension Set where Element: JSONDecodable {
-    public static func decode(_ json: JSON, state: Any? = nil) -> Set? {
+    public static func decode(_ json: JSON, state: Any? = nil) throws -> Set? {
         if case .array(let array) = json {
             var elements = Array<Iterator.Element>()
             for json in array {
-                if let element = Iterator.Element.decode(json, state: state) {
+                if let element = try Iterator.Element.decode(json, state: state) {
                     elements.append(element)
                 }
             }
@@ -161,15 +161,15 @@ extension NSNull: JSONEncodable {
 }
 
 extension String: JSONCodable {
-    public init?(json: JSON, state: Any?) {
+    public init?(_ json: JSON, state: Any?) throws {
         guard let string = json.string else {
             return nil
         }
         self = string
     }
     
-    public static func decode(_ json: JSON, state: Any?) -> String? {
-        return self.init(json: json, state: state)
+    public static func decode(_ json: JSON, state: Any?) throws -> String? {
+        return try self.init(json, state: state)
     }
     
     public func encode(_ state: Any?) -> JSON {
@@ -184,15 +184,15 @@ extension NSNumber: JSONEncodable {
 }
 
 extension Int: JSONCodable {
-    public init?(json: JSON, state: Any?) {
+    public init?(_ json: JSON, state: Any?) throws {
         guard let int = json.int else {
             return nil
         }
         self = int
     }
     
-    public static func decode(_ json: JSON, state: Any?) -> Int? {
-        return self.init(json: json, state: state)
+    public static func decode(_ json: JSON, state: Any?) throws -> Int? {
+        return try self.init(json, state: state)
     }
     
     public func encode(_ state: Any?) -> JSON {
@@ -201,15 +201,15 @@ extension Int: JSONCodable {
 }
 
 extension Double: JSONCodable {
-    public init?(json: JSON, state: Any?) {
+    public init?(_ json: JSON, state: Any?) throws {
         guard let double = json.double else {
             return nil
         }
         self = double
     }
     
-    public static func decode(_ json: JSON, state: Any?) -> Double? {
-        return self.init(json: json, state: state)
+    public static func decode(_ json: JSON, state: Any?) throws -> Double? {
+        return try self.init(json, state: state)
     }
     
     public func encode(_ state: Any?) -> JSON {
@@ -218,15 +218,15 @@ extension Double: JSONCodable {
 }
 
 extension Float: JSONCodable {
-    public init?(json: JSON, state: Any?) {
+    public init?(_ json: JSON, state: Any?) throws {
         guard let float = json.float else {
             return nil
         }
         self = float
     }
     
-    public static func decode(_ json: JSON, state: Any?) -> Float? {
-        return self.init(json: json, state: state)
+    public static func decode(_ json: JSON, state: Any?) throws -> Float? {
+        return try self.init(json, state: state)
     }
     
     public func encode(_ state: Any?) -> JSON {
