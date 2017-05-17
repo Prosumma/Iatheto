@@ -91,8 +91,10 @@ extension Sequence where Iterator.Element: JSONDecodable {
                 }
             }
             return elements
-        } else {
+        } else if case .null = json {
             return nil
+        } else {
+            throw JSONError.undecodableJSON(json)
         }
     }
 }
