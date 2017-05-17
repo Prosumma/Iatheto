@@ -340,12 +340,12 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public func dateWithFormatter(_ formatter: DateFormatter) -> Date? {
+    public func date(withFormatter formatter: DateFormatter) -> Date? {
         guard let string = self.string else { return nil }
         return formatter.date(from: string)
     }
     
-    public mutating func set(date: Date?, formatter: DateFormatter) {
+    public mutating func set(date: Date?, withFormatter formatter: DateFormatter) {
         guard let date = date else {
             self = .null
             return
@@ -355,10 +355,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public var date: Date? {
         get {
-            return dateWithFormatter(JSON.encodingDateFormatter)
+            return date(withFormatter: JSON.encodingDateFormatter)
         }
         set {
-            set(date: newValue, formatter: JSON.decodingDateFormatter)
+            set(date: newValue, withFormatter: JSON.decodingDateFormatter)
         }
     }
     
