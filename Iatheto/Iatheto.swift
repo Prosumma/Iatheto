@@ -373,9 +373,16 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public func date(withFormatter formatter: DateFormatter) -> Date? {
-        guard let string = self.string else { return nil }
-        return formatter.date(from: string)
+    public func dateWithFormatter(_ formatter: DateFormatter) throws -> Date? {
+        switch self {
+        case .string(let string):
+            guard let date = formatter.date(from: string) else { throw JSONError.undecodableJSON(self) }
+            return date
+        case .null:
+            return nil
+        default:
+            throw JSONError.undecodableJSON(self)
+        }
     }
     
     public mutating func set(date: Date?, withFormatter formatter: DateFormatter) {
@@ -388,10 +395,24 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public var date: Date? {
         get {
-            return date(withFormatter: JSON.encodingDateFormatter)
+            return (try? dateWithFormatter(JSON.decodingDateFormatter))!
         }
         set {
             set(date: newValue, withFormatter: JSON.decodingDateFormatter)
+        }
+    }
+    
+    public func numberWithFormatter(_ formatter: NumberFormatter) throws -> NSNumber? {
+        switch self {
+        case .number(let number):
+            return number
+        case .string(let string):
+            guard let number = formatter.number(from: string) else { throw JSONError.undecodableJSON(self) }
+            return number
+        case .null:
+            return nil
+        default:
+            throw JSONError.undecodableJSON(self)
         }
     }
     
