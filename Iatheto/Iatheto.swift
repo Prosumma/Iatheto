@@ -186,10 +186,11 @@ extension NSNull: JSONEncodable {
 
 extension String: JSONCodable {
     public init?(_ json: JSON, state: Any?) throws {
-        guard let string = json.string else {
-            return nil
+        switch json {
+        case .string(let string): self = string
+        case .null: return nil
+        default: throw JSONError.undecodableJSON(json)
         }
-        self = string
     }
     
     public static func decode(_ json: JSON, state: Any?) throws -> String? {
