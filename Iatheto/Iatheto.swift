@@ -185,7 +185,7 @@ extension NSNull: JSONEncodable {
 }
 
 extension String: JSONCodable {
-    public init?(_ json: JSON, state: Any?) throws {
+    public init?(_ json: JSON, state: Any? = nil) throws {
         switch json {
         case .string(let string): self = string
         case .null: return nil
@@ -206,14 +206,16 @@ extension NSNumber: JSONEncodable {
     public func encode(_ state: Any?) -> JSON {
         return .number(self)
     }
+    
+    public static func decode(_ json: JSON, state: Any? = nil) throws -> NSNumber? {
+        return try json.numberWithFormatter(JSON.decodingNumberFormatter)
+    }
 }
 
 extension Int: JSONCodable {
-    public init?(_ json: JSON, state: Any?) throws {
-        guard let int = json.int else {
-            return nil
-        }
-        self = int
+    public init?(_ json: JSON, state: Any? = nil) throws {
+        guard let number = try NSNumber.decode(json, state: state) else { return nil }
+        self = number.intValue
     }
     
     public static func decode(_ json: JSON, state: Any?) throws -> Int? {
@@ -221,16 +223,14 @@ extension Int: JSONCodable {
     }
     
     public func encode(_ state: Any?) -> JSON {
-        return .number(NSNumber(value: self as Int))
+        return .number(NSNumber(value: self))
     }
 }
 
 extension Double: JSONCodable {
-    public init?(_ json: JSON, state: Any?) throws {
-        guard let double = json.double else {
-            return nil
-        }
-        self = double
+    public init?(_ json: JSON, state: Any? = nil) throws {
+        guard let number = try NSNumber.decode(json, state: state) else { return nil }
+        self = number.doubleValue
     }
     
     public static func decode(_ json: JSON, state: Any?) throws -> Double? {
@@ -238,16 +238,14 @@ extension Double: JSONCodable {
     }
     
     public func encode(_ state: Any?) -> JSON {
-        return .number(NSNumber(value: self as Double))
+        return .number(NSNumber(value: self))
     }
 }
 
 extension Float: JSONCodable {
-    public init?(_ json: JSON, state: Any?) throws {
-        guard let float = json.float else {
-            return nil
-        }
-        self = float
+    public init?(_ json: JSON, state: Any? = nil) throws {
+        guard let number = try NSNumber.decode(json, state: state) else { return nil }
+        self = number.floatValue
     }
     
     public static func decode(_ json: JSON, state: Any?) throws -> Float? {
@@ -255,7 +253,22 @@ extension Float: JSONCodable {
     }
     
     public func encode(_ state: Any?) -> JSON {
-        return .number(NSNumber(value: self as Float))
+        return .number(NSNumber(value: self))
+    }
+}
+
+extension Bool: JSONCodable {
+    public init?(_ json: JSON, state: Any? = nil) throws {
+        guard let number = try NSNumber.decode(json, state: state) else { return nil }
+        self = number.boolValue
+    }
+    
+    public static func decode(_ json: JSON, state: Any?) throws -> Bool? {
+        return try self.init(json, state: state)
+    }
+    
+    public func encode(_ state: Any?) -> JSON {
+        return .number(NSNumber(value: self))
     }
 }
 
