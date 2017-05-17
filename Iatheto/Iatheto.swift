@@ -120,8 +120,10 @@ extension Dictionary where Key == String, Value: JSONDecodable {
                     self[key] = value
                 }
             }
-        } else {
+        } else if case .null = json {
             return nil
+        } else {
+            throw JSONError.undecodableJSON(json)
         }
     }
     
@@ -150,8 +152,10 @@ extension Set where Element: JSONDecodable {
                 }
             }
             return self.init(elements)
-        } else {
+        } else if case .null = json {
             return nil
+        } else {
+            throw JSONError.undecodableJSON(json)
         }
     }
 }
@@ -159,6 +163,14 @@ extension Set where Element: JSONDecodable {
 extension NSNull: JSONEncodable {
     public func encode(_ state: Any?) -> JSON {
         return .null
+    }
+    
+    public static func decode(_ json: JSON, state: Any? = nil) throws -> NSNull? {
+        if case .null = json {
+            return NSNull()
+        } else {
+            throw JSONError.undecodableJSON(json)
+        }
     }
 }
 
@@ -532,7 +544,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         return try JSONSerialization.data(withJSONObject: value, options: options)
     }
     
-    public static func decode(_ json: JSON, state: Any?) -> JSON? {
+    public static func decode(_ json: JSON, state: Any?) throws -> JSON? {
         return self.init(json: json, state: state)
     }
     
