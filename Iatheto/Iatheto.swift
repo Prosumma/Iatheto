@@ -272,6 +272,21 @@ extension Bool: JSONCodable {
     }
 }
 
+extension Date: JSONCodable {
+    public init?(_ json: JSON, state: Any? = nil) throws {
+        guard let date = try json.dateWithFormatter(JSON.decodingDateFormatter) else { return nil }
+        self = date
+    }
+    
+    public static func decode(_ json: JSON, state: Any?) throws -> Date? {
+        return try self.init(json, state: state)
+    }
+    
+    public func encode(_ state: Any?) -> JSON {
+        return .string(JSON.encodingDateFormatter.string(from: self))
+    }
+}
+
 public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible, JSONCodable {
     /**
      Used for converting JSON strings into numbers.
