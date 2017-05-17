@@ -37,7 +37,7 @@ public protocol JSONDecodable {
  either return `JSON.Null` or fail a runtime assertion.
 */
 public protocol JSONEncodable {
-    func encode(state: Any?) -> JSON
+    func encode(state: Any?) throws -> JSON
 }
 
 public protocol JSONCodable: JSONEncodable, JSONDecodable {}
@@ -49,12 +49,12 @@ extension JSONDecodable {
 }
 
 extension JSONEncodable {
-    public func encode() -> JSON {
-        return encode(state: nil)
+    public func encode() throws -> JSON {
+        return try encode(state: nil)
     }
     
     public func encode(state: Any?) throws -> Data {
-        let json: JSON = self.encode(state: state)
+        let json: JSON = try encode(state: state)
         return try json.rawData()
     }
     
@@ -64,8 +64,8 @@ extension JSONEncodable {
 }
 
 extension Optional where Wrapped: JSONEncodable {
-    public func encode(state: Any? = nil) -> JSON {
-        return self?.encode(state: state) ?? .null
+    public func encode(state: Any? = nil) throws -> JSON {
+        return try self?.encode(state: state) ?? .null
     }
 }
 
@@ -76,8 +76,8 @@ extension Optional where Wrapped: JSONDecodable {
 }
 
 extension Sequence where Iterator.Element: JSONEncodable {
-    public func encode(state: Any? = nil) -> JSON {
-        return .array(map { $0.encode(state: state) })
+    public func encode(state: Any? = nil) throws -> JSON {
+        return try .array(map { try $0.encode(state: state) })
     }
 }
 
@@ -133,10 +133,10 @@ extension Dictionary where Key == String, Value: JSONDecodable {
 }
 
 extension Dictionary where Key == String, Value: JSONEncodable {
-    public func encode(state: Any? = nil) -> JSON {
+    public func encode(state: Any? = nil) throws -> JSON {
         var json = JSON()
         for (key, value) in self {
-            json[key] = value.encode(state: state)
+            json[key] = try value.encode(state: state)
         }
         return json
     }
@@ -171,7 +171,7 @@ extension Set where Element: JSONDecodable {
 }
 
 extension NSNull: JSONEncodable {
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return .null
     }
     
@@ -188,6 +188,7 @@ extension String: JSONCodable {
     public init?(_ json: JSON, state: Any? = nil) throws {
         switch json {
         case .string(let string): self = string
+        case .number(let number): self = number.stringValue
         case .null: return nil
         default: throw JSONError.undecodableJSON(json)
         }
@@ -197,13 +198,13 @@ extension String: JSONCodable {
         return try self.init(json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return .string(self)
     }
 }
 
 extension NSNumber: JSONEncodable {
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return .number(self)
     }
     
@@ -222,7 +223,7 @@ extension Int: JSONCodable {
         return try self.init(json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return .number(NSNumber(value: self))
     }
 }
@@ -237,7 +238,7 @@ extension Double: JSONCodable {
         return try self.init(json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return .number(NSNumber(value: self))
     }
 }
@@ -252,7 +253,7 @@ extension Float: JSONCodable {
         return try self.init(json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return .number(NSNumber(value: self))
     }
 }
@@ -267,7 +268,7 @@ extension Bool: JSONCodable {
         return try self.init(json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return .number(NSNumber(value: self))
     }
 }
@@ -282,7 +283,7 @@ extension Date: JSONCodable {
         return try self.init(json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return .string(JSON.encodingDateFormatter.string(from: self))
     }
 }
@@ -614,16 +615,12 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         return try self.init(json, state: state)
     }
     
-    public func encode(state: Any?) -> JSON {
+    public func encode(state: Any?) throws -> JSON {
         return self
     }
     
     public var description: String {
-        do {
-            return try String(data: rawData(.prettyPrinted), encoding: String.Encoding.utf8)!
-        } catch _ {
-            return ""
-        }
+        return try! String(data: rawData(.prettyPrinted), encoding: String.Encoding.utf8)!
     }
     
     public var debugDescription: String {
