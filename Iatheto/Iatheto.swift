@@ -9,8 +9,9 @@
 import Foundation
 
 public enum JSONError: Error {
-    case unknownType(Any)
-    case unexpectedType(JSON)
+    case unencodableValue(Any)
+    case undecodableJSON(JSON)
+    case invalidState(Any?)
 }
 
 /**
@@ -318,7 +319,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         } else if value is NSNull {
             self = .null
         } else {
-            throw JSONError.unknownType(value)
+            throw JSONError.unencodableValue(value)
         }
     }
     
