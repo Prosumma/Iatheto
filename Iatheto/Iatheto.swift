@@ -86,12 +86,7 @@ extension Sequence where Iterator.Element: JSONEncodable {
 
 extension Array where Element: JSONDecodable {
     public static func decode(json: JSON?, state: Any? = nil) throws -> [Iterator.Element]? {
-        guard let json = json else { return nil }
-        switch json {
-        case .array(let array): return try array.flatMap{ try Iterator.Element.decode(json: $0, state: state) }
-        case .null: return nil
-        default: throw JSONError.undecodableJSON(json)
-        }
+        return try json?.decodeArray{ array in try array.flatMap{ try Iterator.Element.decode(json: $0, state: state) } }
     }
     
     public static func decode(string: String, state: Any? = nil) throws -> [Iterator.Element]? {
@@ -105,11 +100,8 @@ extension Array where Element: JSONDecodable {
     }
     
     public static func decode(json: JSON?, state: Any? = nil) throws -> [Iterator.Element?]? {
-        guard let json = json else { return nil }
-        switch json {
-        case .array(let array): return try array.map{ try Iterator.Element.decode(json: $0, state: state) }
-        case .null: return nil
-        default: throw JSONError.undecodableJSON(json)
+        return try json?.decodeArray { array in
+            try array.map{ try Iterator.Element.decode(json: $0, state: state) }
         }
     }
     
@@ -136,17 +128,11 @@ extension Sequence where Iterator.Element == JSON {
 
 extension Dictionary where Key == String, Value: JSONDecodable {
     public static func decode(json: JSON?, state: Any? = nil) throws -> Dictionary<Key, Value>? {
-        guard let json = json else { return nil }
-        switch json {
-        case .dictionary(let dictionary):
+        return try json?.decodeDictionary { dictionary in
             return try dictionary.flatMap {
                 guard let value = try Value.decode(json: $0.1, state: state) else { return nil }
                 return (key: $0.0, value: value)
             }.dictionary()
-        case .null:
-            return nil
-        default:
-            throw JSONError.undecodableJSON(json)
         }
     }
     
@@ -161,11 +147,8 @@ extension Dictionary where Key == String, Value: JSONDecodable {
     }
     
     public static func decode(json: JSON?, state: Any? = nil) throws -> Dictionary<Key, Value?>? {
-        guard let json = json else { return nil }
-        switch json {
-        case .dictionary(let dictionary): return try dictionary.map{ (key: $0.0, value: try Value.decode(json: $0.1, state: state)) }.dictionary()
-        case .null: return nil
-        default: throw JSONError.undecodableJSON(json)
+        return try json?.decodeDictionary { dictionary in
+            try dictionary.map{ (key: $0.0, value: try Value.decode(json: $0.1, state: state)) }.dictionary()
         }
     }
     
@@ -244,12 +227,12 @@ extension NSNull: JSONEncodable {
 
 extension String: JSONCodable {
     public static func decode(json: JSON?, state: Any?) throws -> String? {
-        guard let json = json else { return nil }
-        switch json {
-        case .string(let string): return string
-        case .number(let number): return number.stringValue
-        case .null: return nil
-        default: throw JSONError.undecodableJSON(json)
+        return try json?.decode { json in
+            switch json {
+            case .string(let string): return string
+            case .number(let number): return number.stringValue
+            default: return nil
+            }
         }
     }
     
@@ -280,11 +263,11 @@ extension NSNumber: JSONEncodable {
 
 extension Array where Element == NSNumber {
     public static func decode(json: JSON?, state: Any? = nil) throws -> [NSNumber]? {
-        guard let json = json else { return nil }
-        switch json {
-        case .array(let array): return try array.flatMap{ try NSNumber.decode(json: $0, state: state) }
-        case .null: return nil
-        default: throw JSONError.undecodableJSON(json)
+        return try json?.decode { json in
+            if case .array(let array) = json {
+                return try array.flatMap{ try NSNumber.decode(json: $0, state: state) }
+            }
+            return nil
         }
     }
     
@@ -299,11 +282,8 @@ extension Array where Element == NSNumber {
     }
     
     public static func decode(json: JSON?, state: Any? = nil) throws -> [NSNumber?]? {
-        guard let json = json else { return nil }
-        switch json {
-        case .array(let array): return try array.map{ try NSNumber.decode(json: $0, state: state) }
-        case .null: return nil
-        default: throw JSONError.undecodableJSON(json)
+        return try json?.decodeArray { array in
+            try array.map{ try NSNumber.decode(json: $0, state: state) }
         }
     }
     
@@ -365,6 +345,26 @@ extension Date: JSONCodable {
     
     public func encode(state: Any?) throws -> JSON {
         return .string(JSON.encodingDateFormatter.string(from: self))
+    }
+}
+
+extension JSONDecodable where Self: RawRepresentable, Self.RawValue == String {
+    public static func decode(json: JSON?, state: Any?) throws -> Self? {
+        return try json?.decodeString { self.init(rawValue: $0) }
+    }
+}
+
+extension JSONDecodable where Self: RawRepresentable, Self.RawValue == Int {
+    public static func decode(json: JSON?, state: Any?) throws -> Self? {
+        guard let json = json else { return nil }
+        guard let number = try json.numberWithFormatter(JSON.decodingNumberFormatter) else { throw JSONError.undecodableJSON(json) }
+        return self.init(rawValue: number.intValue)
+    }
+}
+
+extension JSONEncodable where Self: RawRepresentable, Self.RawValue: JSONEncodable {
+    public func encode(state: Any?) throws -> JSON {
+        return try rawValue.encode(state: state)
     }
 }
 
@@ -459,6 +459,50 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
+    public func decode<T>(make: (JSON) throws -> T?) throws -> T? {
+        if let result = try make(self) { return result }
+        switch self {
+        case .null: return nil
+        default: throw JSONError.undecodableJSON(self)
+        }
+    }
+    
+    public func decodeString<T>(make: (String) throws -> T?) throws -> T? {
+        return try decode { json in
+            if case .string(let string) = json {
+                return try make(string)
+            }
+            return nil
+        }
+    }
+    
+    public func decodeNumber<T>(make: (NSNumber) throws -> T?) throws -> T? {
+        return try decode { json in
+            if case .number(let number) = json {
+                return try make(number)
+            }
+            return nil
+        }
+    }
+    
+    public func decodeArray<T>(make: ([JSON]) throws -> T?) throws -> T? {
+        return try decode { json in
+            if case .array(let array) = json {
+                return try make(array)
+            }
+            return nil
+        }
+    }
+    
+    public func decodeDictionary<T>(make: ([String: JSON]) throws -> T?) throws -> T? {
+        return try decode { json in
+            if case .dictionary(let dictionary) = json {
+                return try make(dictionary)
+            }
+            return nil
+        }
+    }
+    
     public var string: String? {
         get {
             if case .string(let string) = self {
@@ -507,15 +551,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public func numberWithFormatter(_ formatter: NumberFormatter) throws -> NSNumber? {
         switch self {
-        case .number(let number):
-            return number
-        case .string(let string):
-            guard let number = formatter.number(from: string) else { throw JSONError.undecodableJSON(self) }
-            return number
-        case .null:
-            return nil
-        default:
-            throw JSONError.undecodableJSON(self)
+        case .number(let number): return number
+        case .string(let string): return try formatter.number(from: string) ??! JSONError.undecodableJSON(self)
+        case .null: return nil
+        default: throw JSONError.undecodableJSON(self)
         }
     }
     
@@ -773,7 +812,7 @@ extension JSON: ExpressibleByNilLiteral {
     
 }
 
-fileprivate extension Array {
+extension Array {
     /**
      Reconstruct a dictionary after it's been reduced to an array of key-value pairs by `filter` and the like.
      
@@ -789,4 +828,11 @@ fileprivate extension Array {
         }
         return dictionary
     }
+}
+
+infix operator ??! : NilCoalescingPrecedence
+
+func ??!<T>(lhs: T?, rhs: Error) throws -> T {
+    guard let lhs = lhs else { throw rhs }
+    return lhs
 }
