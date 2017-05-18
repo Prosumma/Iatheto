@@ -25,7 +25,7 @@ public enum JSONError: Error {
  runtime assertion.
 */
 public protocol JSONDecodable {
-    static func decode(_ json: JSON, state: Any?) throws -> Self?
+    static func decode(json: JSON?, state: Any?) throws -> Self?
 }
 
 /**
@@ -43,8 +43,18 @@ public protocol JSONEncodable {
 public protocol JSONCodable: JSONEncodable, JSONDecodable {}
 
 extension JSONDecodable {
-    public static func decode(_ json: JSON) throws -> Self? {
-        return try decode(json, state: nil)
+    public static func decode(json: JSON?) throws -> Self? {
+        return try decode(json: json, state: nil)
+    }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> Self? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> Self? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
     }
 }
 
@@ -53,13 +63,12 @@ extension JSONEncodable {
         return try encode(state: nil)
     }
     
-    public func encode(state: Any?) throws -> Data {
-        let json: JSON = try encode(state: state)
-        return try json.rawData()
+    public func encode(state: Any? = nil, options: JSONSerialization.WritingOptions = []) throws -> Data {
+        return try encode(state: state).rawData()
     }
     
-    public func encode() throws -> Data {
-        return try encode(state: nil)
+    public func encode(state: Any? = nil, options: JSONSerialization.WritingOptions = []) throws -> String? {
+        return try String(data: encode(state: state, options: options), encoding: .utf8)
     }
 }
 
@@ -69,66 +78,105 @@ extension Optional where Wrapped: JSONEncodable {
     }
 }
 
-extension Optional where Wrapped: JSONDecodable {
-    public static func decode(_ json: JSON, state: Any? = nil) throws -> Wrapped? {
-        return try Wrapped.decode(json, state: state)
-    }
-}
-
 extension Sequence where Iterator.Element: JSONEncodable {
     public func encode(state: Any? = nil) throws -> JSON {
         return try .array(map { try $0.encode(state: state) })
     }
 }
 
-extension Sequence where Iterator.Element: JSONDecodable {
-    public static func decode(_ json: JSON, state: Any? = nil) throws -> [Iterator.Element]? {
-        if case .array(let array) = json {
-            var elements = Array<Iterator.Element>()
-            for json in array {
-                if let element = try Iterator.Element.decode(json, state: state) {
-                    elements.append(element)
-                }
-            }
-            return elements
-        } else if case .null = json {
-            return nil
-        } else {
-            throw JSONError.undecodableJSON(json)
+extension Array where Element: JSONDecodable {
+    public static func decode(json: JSON?, state: Any? = nil) throws -> [Iterator.Element]? {
+        guard let json = json else { return nil }
+        switch json {
+        case .array(let array): return try array.flatMap{ try Iterator.Element.decode(json: $0, state: state) }
+        case .null: return nil
+        default: throw JSONError.undecodableJSON(json)
         }
+    }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> [Iterator.Element]? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> [Iterator.Element]? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(json: JSON?, state: Any? = nil) throws -> [Iterator.Element?]? {
+        guard let json = json else { return nil }
+        switch json {
+        case .array(let array): return try array.map{ try Iterator.Element.decode(json: $0, state: state) }
+        case .null: return nil
+        default: throw JSONError.undecodableJSON(json)
+        }
+    }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> [Iterator.Element?]? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> [Iterator.Element?]? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
     }
 }
 
 extension Sequence where Iterator.Element == JSON {
-    public func decode<T: JSONDecodable>(_ state: Any? = nil) throws -> [T] {
-        var elements = [T]()
-        for json in self {
-            if let element = try T.decode(json, state: state) {
-                elements.append(element)
-            }
-        }
-        return elements
+    public func decode<T: JSONDecodable>(state: Any? = nil) throws -> [T] {
+        return try flatMap{ try T.decode(json: $0, state: state) }
+    }
+    
+    public func decode<T: JSONDecodable>(state: Any? = nil) throws -> [T?] {
+        return try map{ try T.decode(json: $0, state: state) }
     }
 }
 
 extension Dictionary where Key == String, Value: JSONDecodable {
-    public init?(_ json: JSON, state: Any? = nil) throws {
-        if case .dictionary(let dictionary) = json {
-            self.init()
-            for (key, json) in dictionary {
-                if let value = try Value.decode(json, state: state) {
-                    self[key] = value
-                }
-            }
-        } else if case .null = json {
+    public static func decode(json: JSON?, state: Any? = nil) throws -> Dictionary<Key, Value>? {
+        guard let json = json else { return nil }
+        switch json {
+        case .dictionary(let dictionary):
+            return try dictionary.flatMap {
+                guard let value = try Value.decode(json: $0.1, state: state) else { return nil }
+                return (key: $0.0, value: value)
+            }.dictionary()
+        case .null:
             return nil
-        } else {
+        default:
             throw JSONError.undecodableJSON(json)
         }
     }
     
-    public static func decode(_ json: JSON, state: Any? = nil) throws -> Dictionary<Key, Value>? {
-        return try self.init(json, state: state)
+    public static func decode(string: String, state: Any? = nil) throws -> Dictionary<Key, Value>? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> Dictionary<Key, Value>? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(json: JSON?, state: Any? = nil) throws -> Dictionary<Key, Value?>? {
+        guard let json = json else { return nil }
+        switch json {
+        case .dictionary(let dictionary): return try dictionary.map{ (key: $0.0, value: try Value.decode(json: $0.1, state: state)) }.dictionary()
+        case .null: return nil
+        default: throw JSONError.undecodableJSON(json)
+        }
+    }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> Dictionary<Key, Value?>? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> Dictionary<Key, Value?>? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
     }
 }
 
@@ -143,30 +191,29 @@ extension Dictionary where Key == String, Value: JSONEncodable {
 }
 
 extension Dictionary where Value == JSON {
-    public func decode<T: JSONDecodable>(_ state: Any? = nil) throws -> [Key: T] {
+    public func decode<T: JSONDecodable>(state: Any? = nil) throws -> [Key: T] {
         var dictionary = [Key: T]()
         for (key, json) in self {
-            dictionary[key] = try T.decode(json, state: state)
+            dictionary[key] = try T.decode(json: json, state: state)
         }
         return dictionary
     }
 }
 
 extension Set where Element: JSONDecodable {
-    public static func decode(_ json: JSON, state: Any? = nil) throws -> Set? {
-        if case .array(let array) = json {
-            var elements = Array<Iterator.Element>()
-            for json in array {
-                if let element = try Iterator.Element.decode(json, state: state) {
-                    elements.append(element)
-                }
-            }
-            return self.init(elements)
-        } else if case .null = json {
-            return nil
-        } else {
-            throw JSONError.undecodableJSON(json)
-        }
+    public static func decode(json: JSON?, state: Any? = nil) throws -> Set? {
+        guard let array: [Element] = try [Element].decode(json: json, state: state) else { return nil }
+        return Set(array)
+    }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> Set? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> Set? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
     }
 }
 
@@ -175,27 +222,35 @@ extension NSNull: JSONEncodable {
         return .null
     }
     
-    public static func decode(_ json: JSON, state: Any? = nil) throws -> NSNull? {
+    public static func decode(json: JSON?, state: Any? = nil) throws -> NSNull? {
+        guard let json = json else { return nil }
         if case .null = json {
             return NSNull()
         } else {
             throw JSONError.undecodableJSON(json)
         }
     }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> NSNull? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> NSNull? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
+    }
 }
 
 extension String: JSONCodable {
-    public init?(_ json: JSON, state: Any? = nil) throws {
+    public static func decode(json: JSON?, state: Any?) throws -> String? {
+        guard let json = json else { return nil }
         switch json {
-        case .string(let string): self = string
-        case .number(let number): self = number.stringValue
+        case .string(let string): return string
+        case .number(let number): return number.stringValue
         case .null: return nil
         default: throw JSONError.undecodableJSON(json)
         }
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) throws -> String? {
-        return try self.init(json, state: state)
     }
     
     public func encode(state: Any?) throws -> JSON {
@@ -208,19 +263,64 @@ extension NSNumber: JSONEncodable {
         return .number(self)
     }
     
-    public static func decode(_ json: JSON, state: Any? = nil) throws -> NSNumber? {
-        return try json.numberWithFormatter(JSON.decodingNumberFormatter)
+    public static func decode(json: JSON?, state: Any? = nil) throws -> NSNumber? {
+        return try json?.numberWithFormatter(JSON.decodingNumberFormatter)
+    }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> NSNumber? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> NSNumber? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
+    }
+}
+
+extension Array where Element == NSNumber {
+    public static func decode(json: JSON?, state: Any? = nil) throws -> [NSNumber]? {
+        guard let json = json else { return nil }
+        switch json {
+        case .array(let array): return try array.flatMap{ try NSNumber.decode(json: $0, state: state) }
+        case .null: return nil
+        default: throw JSONError.undecodableJSON(json)
+        }
+    }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> [NSNumber]? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> [NSNumber]? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(json: JSON?, state: Any? = nil) throws -> [NSNumber?]? {
+        guard let json = json else { return nil }
+        switch json {
+        case .array(let array): return try array.map{ try NSNumber.decode(json: $0, state: state) }
+        case .null: return nil
+        default: throw JSONError.undecodableJSON(json)
+        }
+    }
+    
+    public static func decode(string: String, state: Any? = nil) throws -> [NSNumber?]? {
+        let json = try JSON(string: string)
+        return try decode(json: json, state: state)
+    }
+    
+    public static func decode(data: Data, state: Any? = nil) throws -> [NSNumber?]? {
+        let json = try JSON(data: data)
+        return try decode(json: json, state: state)
     }
 }
 
 extension Int: JSONCodable {
-    public init?(_ json: JSON, state: Any? = nil) throws {
-        guard let number = try NSNumber.decode(json, state: state) else { return nil }
-        self = number.intValue
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) throws -> Int? {
-        return try self.init(json, state: state)
+    public static func decode(json: JSON?, state: Any?) throws -> Int? {
+        return try NSNumber.decode(json: json, state: state)?.intValue
     }
     
     public func encode(state: Any?) throws -> JSON {
@@ -229,13 +329,8 @@ extension Int: JSONCodable {
 }
 
 extension Double: JSONCodable {
-    public init?(_ json: JSON, state: Any? = nil) throws {
-        guard let number = try NSNumber.decode(json, state: state) else { return nil }
-        self = number.doubleValue
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) throws -> Double? {
-        return try self.init(json, state: state)
+    public static func decode(json: JSON?, state: Any?) throws -> Double? {
+        return try NSNumber.decode(json: json, state: state)?.doubleValue
     }
     
     public func encode(state: Any?) throws -> JSON {
@@ -244,13 +339,8 @@ extension Double: JSONCodable {
 }
 
 extension Float: JSONCodable {
-    public init?(_ json: JSON, state: Any? = nil) throws {
-        guard let number = try NSNumber.decode(json, state: state) else { return nil }
-        self = number.floatValue
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) throws -> Float? {
-        return try self.init(json, state: state)
+    public static func decode(json: JSON?, state: Any?) throws -> Float? {
+        return try NSNumber.decode(json: json, state: state)?.floatValue
     }
     
     public func encode(state: Any?) throws -> JSON {
@@ -259,13 +349,8 @@ extension Float: JSONCodable {
 }
 
 extension Bool: JSONCodable {
-    public init?(_ json: JSON, state: Any? = nil) throws {
-        guard let number = try NSNumber.decode(json, state: state) else { return nil }
-        self = number.boolValue
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) throws -> Bool? {
-        return try self.init(json, state: state)
+    public static func decode(json: JSON?, state: Any?) throws -> Bool? {
+        return try NSNumber.decode(json: json, state: state)?.boolValue
     }
     
     public func encode(state: Any?) throws -> JSON {
@@ -274,13 +359,8 @@ extension Bool: JSONCodable {
 }
 
 extension Date: JSONCodable {
-    public init?(_ json: JSON, state: Any? = nil) throws {
-        guard let date = try json.dateWithFormatter(JSON.decodingDateFormatter) else { return nil }
-        self = date
-    }
-    
-    public static func decode(_ json: JSON, state: Any?) throws -> Date? {
-        return try self.init(json, state: state)
+    public static func decode(json: JSON?, state: Any?) throws -> Date? {
+        return try json?.dateWithFormatter(JSON.decodingDateFormatter)
     }
     
     public func encode(state: Any?) throws -> JSON {
@@ -337,10 +417,6 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public init() {
         self = .dictionary([:])
-    }
-    
-    public init?(_ json: JSON, state: Any? = nil) throws {
-        self = json
     }
     
     public init<S: Sequence>(sequence: S) where S.Iterator.Element == JSON {
@@ -611,8 +687,8 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         return try JSONSerialization.data(withJSONObject: value, options: options)
     }
     
-    public static func decode(_ json: JSON, state: Any?) throws -> JSON? {
-        return try self.init(json, state: state)
+    public static func decode(json: JSON?, state: Any?) throws -> JSON? {
+        return json
     }
     
     public func encode(state: Any?) throws -> JSON {
@@ -697,3 +773,20 @@ extension JSON: ExpressibleByNilLiteral {
     
 }
 
+fileprivate extension Array {
+    /**
+     Reconstruct a dictionary after it's been reduced to an array of key-value pairs by `filter` and the like.
+     
+     ```
+     var dictionary = [1: "ok", 2: "crazy", 99: "abnormal"]
+     dictionary = dictionary.filter{ $0.value == "ok" }.dictionary()
+     ```
+     */
+    func dictionary<K: Hashable, V>() -> [K: V] where Element == Dictionary<K, V>.Element {
+        var dictionary = [K: V]()
+        for element in self {
+            dictionary[element.key] = element.value
+        }
+        return dictionary
+    }
+}
