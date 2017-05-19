@@ -62,7 +62,7 @@ class IathetoTests: XCTestCase {
         }
     }
     
-    func testDecodeWatusi() {
+    func testDecodeStructWatusi() {
         do {
             guard let watusi = try Watusi.decode(string: "{\"float\": 73, \"ints\": [2,7.0,9,null]}") else {
                 XCTFail()
@@ -74,6 +74,32 @@ class IathetoTests: XCTestCase {
             XCTFail()
         }
     }
+
+    class Awesome: JSONDecodable {
+        let watusi: Watusi
+        let level: Int
+        
+        required init(watusi: Watusi, level: Int) {
+            self.watusi = watusi
+            self.level = level
+        }
+        
+        static func decode(json: JSON?, state: Any?) throws -> Self? {
+            return try json?.decodeDictionary { dictionary in
+                return try self.init(watusi: Watusi.decode(json: dictionary["watusi"])!, level: Int.decode(json: dictionary["level"])!)
+            }
+        }
+    }
     
-    
+    func testDecodeClassAwesome() {
+        do {
+            guard let awesome = try Awesome.decode(string: "{\"watusi\": {\"float\": 69.96, \"ints\": [8,4]}, \"level\": 42}") else {
+                XCTFail()
+                return
+            }
+            XCTAssertEqual(awesome.level, 42)
+        } catch _ {
+            XCTFail()
+        }
+    }
 }
