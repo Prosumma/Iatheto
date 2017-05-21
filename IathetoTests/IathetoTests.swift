@@ -61,6 +61,16 @@ class IathetoTests: XCTestCase {
         }
     }
     
+    func testKeyPath() {
+        do {
+            let json = try JSON(string: "{\"float\": 73.2, \"numbers\": [2,7.0,9,99.3]}")
+            let float = json["numbers" +> .last].float!
+            XCTAssertEqual(float, 99.3)
+        } catch _ {
+            XCTFail()
+        }
+    }
+    
     func testDecodeStructWatusi() {
         do {
             guard let watusi = try Watusi.decode(string: "{\"float\": 73, \"ints\": [2,7.0,9,null]}") else {

@@ -22,6 +22,83 @@ public enum JSONError: Error {
     case invalidState(Any?)
 }
 
+public indirect enum KeyPath: KeyPathConvertible {
+    case key(String)
+    case index(Int)
+    case last
+    case path([KeyPath])
+    
+    public func flatten() -> [KeyPath] {
+        var result = Array<KeyPath>()
+        if case .path(let path) = self {
+            for elem in path {
+                result.append(contentsOf: elem.flatten())
+            }
+        } else {
+            result.append(self)
+        }
+        return result
+    }
+    
+    public var iathetoKeyPath: KeyPath { return self }
+}
+
+extension KeyPath: ExpressibleByStringLiteral {
+    public init(stringLiteral value: StringLiteralType) {
+        self = .key(value)
+    }
+    
+    public init(extendedGraphemeClusterLiteral value: StringLiteralType) {
+        self = .key(value)
+    }
+    
+    public init(unicodeScalarLiteral value: StringLiteralType) {
+        self = .key(value)
+    }
+}
+
+extension KeyPath: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: IntegerLiteralType) {
+        self = .index(value)
+    }
+}
+
+extension String: KeyPathConvertible {
+    public var iathetoKeyPath: KeyPath { return .key(self) }
+}
+
+extension Int: KeyPathConvertible {
+    public var iathetoKeyPath: KeyPath { return .index(self) }
+}
+
+protocol KeyPathConvertible {
+    var iathetoKeyPath: KeyPath { get }
+}
+
+precedencegroup KeyPathPrecedence {
+    associativity: right
+    higherThan: RangeFormationPrecedence
+    lowerThan: AdditionPrecedence
+}
+
+infix operator +> : KeyPathPrecedence // This gives us right-association
+
+func +>(lhs: KeyPathConvertible, rhs: KeyPathConvertible) -> KeyPath {
+    return .path([lhs.iathetoKeyPath, rhs.iathetoKeyPath])
+}
+
+func +>(lhs: KeyPath, rhs: KeyPathConvertible) -> KeyPath {
+    return .path([lhs, rhs.iathetoKeyPath])
+}
+
+func +>(lhs: KeyPathConvertible, rhs: KeyPath) -> KeyPath {
+    return .path([lhs.iathetoKeyPath, rhs])
+}
+
+func +>(lhs: KeyPath, rhs: KeyPath) -> KeyPath {
+    return .path([lhs, rhs])
+}
+
 public protocol JSONDecodable {
     static func decode(json: JSON, state: Any?) throws -> Self?
 }
@@ -671,6 +748,21 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
+    public subscript(keyPath: KeyPath) -> JSON {
+        get {
+            var result: JSON = self
+            for elem in keyPath.flatten() {
+                switch elem {
+                case .index(let index): result = result[index]
+                case .key(let key): result = result[key]
+                case .last: result = result[result.array!.count - 1]
+                case .path: fatalError("KeyPath was not flattened before use.")
+                }
+            }
+            return result
+        }
+    }
+    
     public var value: Any {
         switch self {
         case .null: return NSNull()
@@ -726,6 +818,20 @@ public struct JSONDictionary: Sequence, ExpressibleByDictionaryLiteral {
         }
         set {
             dictionary[key] = newValue
+        }
+    }
+    
+    public subscript(keyPath: KeyPath) -> JSON {
+        let keyPaths = keyPath.flatten()
+        let first = keyPaths[0]
+        if case .key(let key) = first {
+            var json = self[key]
+            for elem in keyPaths.suffix(from: 1) {
+                json = json[elem]
+            }
+            return json
+        } else {
+            fatalError("Only .key KeyPath is supported for JSONDictionary.")
         }
     }
 }
