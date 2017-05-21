@@ -52,8 +52,7 @@ class IathetoTests: XCTestCase {
         let float: Float
         let ints: [Int?]
         
-        public static func decode(json: JSON?, state: Any?) throws -> Watusi? {
-            guard let json = json else { return nil }
+        public static func decode(json: JSON, state: Any?) throws -> Watusi? {
             switch json {
             case .dictionary(let dictionary): return try Watusi(float: Float.decode(json: dictionary["float"]) ?? 0, ints: [Int].decode(json: dictionary["ints"]) ?? [])
             case .null: return nil
@@ -84,8 +83,8 @@ class IathetoTests: XCTestCase {
             self.level = level
         }
         
-        static func decode(json: JSON?, state: Any?) throws -> Self? {
-            return try json?.decodeDictionary { dictionary in
+        static func decode(json: JSON, state: Any?) throws -> Self? {
+            return try json.decodeDictionary { dictionary in
                 return try self.init(watusi: Watusi.decode(json: dictionary["watusi"])!, level: Int.decode(json: dictionary["level"])!)
             }
         }
