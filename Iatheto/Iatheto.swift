@@ -387,7 +387,7 @@ extension Bool: JSONCodable {
 
 extension Date: JSONCodable {
     public static func decode(json: JSON, state: Any?) throws -> Date? {
-        return try json.dateWithFormatter(JSON.decodingDateFormatter)
+        return try json.dateWithFormatters(JSON.decodingDateFormatters)
     }
     
     public func encode(state: Any?) throws -> JSON {
@@ -453,6 +453,18 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.timeZone = TimeZone(identifier: "UTC")
         return dateFormatter
+    }()
+    
+    public static var decodingDateFormatters: [DateFormatter] = {
+        let createFormatter: (String) -> DateFormatter = {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = $0
+            dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+            dateFormatter.timeZone = TimeZone(identifier: "UTC")
+            return dateFormatter
+        }
+        let formats = ["yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd"]
+        return formats.map(createFormatter)
     }()
     
     case null
@@ -566,11 +578,15 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
-    public func dateWithFormatter(_ formatter: DateFormatter) throws -> Date? {
+    public func dateWithFormatters<S: Sequence>(_ formatters: S) throws -> Date? where S.Iterator.Element == DateFormatter {
         switch self {
         case .string(let string):
-            guard let date = formatter.date(from: string) else { throw JSONError.undecodableJSON(self) }
-            return date
+            for formatter in formatters {
+                if let date = formatter.date(from: string) {
+                    return date
+                }
+            }
+            throw JSONError.undecodableJSON(self)
         case .null:
             return nil
         default:
@@ -588,10 +604,10 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public var date: Date? {
         get {
-            return (try? dateWithFormatter(JSON.decodingDateFormatter))!
+            return (try? dateWithFormatters(JSON.decodingDateFormatters))!
         }
         set {
-            set(date: newValue, withFormatter: JSON.decodingDateFormatter)
+            set(date: newValue, withFormatter: JSON.encodingDateFormatter)
         }
     }
     
