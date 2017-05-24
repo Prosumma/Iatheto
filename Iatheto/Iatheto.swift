@@ -108,8 +108,8 @@ extension JSONDecodable {
         return try decode(json: json, state: nil)
     }
     
-    public static func decode(string: String, state: Any? = nil) throws -> Self? {
-        let json = try JSON(string: string)
+    public static func decode(parsing string: String, state: Any? = nil) throws -> Self? {
+        let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
@@ -171,8 +171,8 @@ extension Array where Element: JSONDecodable {
         return try json.decodeArray{ array in try array.flatMap{ try Element.decode(json: $0, state: state) } }
     }
     
-    public static func decode(string: String, state: Any? = nil) throws -> [Element]? {
-        let json = try JSON(string: string)
+    public static func decode(parsing string: String, state: Any? = nil) throws -> [Element]? {
+        let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
@@ -187,8 +187,8 @@ extension Array where Element: JSONDecodable {
         }
     }
     
-    public static func decode(string: String, state: Any? = nil) throws -> [Element?]? {
-        let json = try JSON(string: string)
+    public static func decode(parsing string: String, state: Any? = nil) throws -> [Element?]? {
+        let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
@@ -218,8 +218,8 @@ extension Dictionary where Key == String, Value: JSONDecodable {
         }
     }
     
-    public static func decode(string: String, state: Any? = nil) throws -> Dictionary<Key, Value>? {
-        let json = try JSON(string: string)
+    public static func decode(parsing string: String, state: Any? = nil) throws -> Dictionary<Key, Value>? {
+        let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
@@ -234,8 +234,8 @@ extension Dictionary where Key == String, Value: JSONDecodable {
         }
     }
     
-    public static func decode(string: String, state: Any? = nil) throws -> Dictionary<Key, Value?>? {
-        let json = try JSON(string: string)
+    public static func decode(parsing string: String, state: Any? = nil) throws -> Dictionary<Key, Value?>? {
+        let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
@@ -274,8 +274,8 @@ extension Set where Element: JSONDecodable, Element: Hashable {
         return Set<Element>(array)
     }
     
-    public static func decode(string: String, state: Any? = nil) throws -> Set<Element>? {
-        let json = try JSON(string: string)
+    public static func decode(parsing string: String, state: Any? = nil) throws -> Set<Element>? {
+        let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
@@ -298,8 +298,8 @@ extension NSNull: JSONCodable {
         }
     }
     
-    public static func decode(string: String, state: Any? = nil) throws -> Self? {
-        let json = try JSON(string: string)
+    public static func decode(parsing string: String, state: Any? = nil) throws -> Self? {
+        let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
@@ -334,8 +334,8 @@ extension NSNumber: JSONCodable {
         return try cast(json.numberWithFormatter(JSON.decodingNumberFormatter))
     }
     
-    public static func decode(string: String, state: Any? = nil) throws -> NSNumber? {
-        let json = try JSON(string: string)
+    public static func decode(parsing string: String, state: Any? = nil) throws -> NSNumber? {
+        let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
@@ -433,39 +433,18 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         return numberFormatter
     }()
     
-    /**
-     Used for converting JSON strings into dates.
-    */
-    public static var encodingDateFormatter: DateFormatter = {
+    private static func createDateFormatter(_ format: String, locale: Locale = Locale(identifier: "en_US_POSIX"), timeZone: TimeZone = TimeZone(identifier: "UTC")!) -> DateFormatter {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        dateFormatter.dateFormat = format
+        dateFormatter.locale = locale
+        dateFormatter.timeZone = timeZone
         return dateFormatter
-    }()
+    }
     
-    /**
-     Used for converting dates into JSON strings.
-    */
-    public static var decodingDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.timeZone = TimeZone(identifier: "UTC")
-        return dateFormatter
-    }()
-    
-    public static var decodingDateFormatters: [DateFormatter] = {
-        let createFormatter: (String) -> DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = $0
-            dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-            dateFormatter.timeZone = TimeZone(identifier: "UTC")
-            return dateFormatter
-        }
-        let formats = ["yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd"]
-        return formats.map(createFormatter)
-    }()
+    public static var encodingDateFormatter = createDateFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    public static var dateOnlyFormatter = createDateFormatter("yyyy-MM-dd")
+    public static var dateAndTimeFormatters = [encodingDateFormatter] + ["yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd"].map{ createDateFormatter($0) }
+    public static var decodingDateFormatters = [dateOnlyFormatter] + dateAndTimeFormatters
     
     case null
     case string(String)
@@ -488,7 +467,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     /**
      Initializes `JSON` with a string containing well-formed JSON.
     */
-    public init(string: String) throws {
+    public init(parsing string: String) throws {
         try self.init(data: string.data(using: String.Encoding.utf8)!)
     }
     

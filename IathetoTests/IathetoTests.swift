@@ -13,7 +13,7 @@ class IathetoTests: XCTestCase {
  
     func testDecodingString() {
         do {
-            let json = try JSON(string: "[27, \"string\"]")
+            let json = try JSON(parsing: "[27, \"string\"]")
             let strings: [String]? = try [String].decode(json: json)
             XCTAssertNotNil(strings)
             print(strings!)
@@ -24,7 +24,7 @@ class IathetoTests: XCTestCase {
     
     func testDecodingNumber() {
         do {
-            let json = try JSON(string: "[27, \"889.3\"]")
+            let json = try JSON(parsing: "[27, \"889.3\"]")
             let numbers: [NSNumber]? = try [NSNumber].decode(json: json)
             XCTAssertNotNil(numbers)
             print(numbers!)
@@ -35,7 +35,7 @@ class IathetoTests: XCTestCase {
     
     func testDecodingInts() {
         do {
-            let json = try JSON(string: "[27, \"889.3\", \"19.9\", 304]")
+            let json = try JSON(parsing: "[27, \"889.3\", \"19.9\", 304]")
             let ints: [Int]? = try [Int].decode(json: json)
             XCTAssertNotNil(ints)
             print(ints!)
@@ -45,7 +45,7 @@ class IathetoTests: XCTestCase {
     }
     
     func testDecodingInvalidFloatThrows() {
-        XCTAssertThrowsError(try [String: Float].decode(string: "{\"an actual float\": 17.3, \"not a float\": [27]}"))
+        XCTAssertThrowsError(try [String: Float].decode(parsing: "{\"an actual float\": 17.3, \"not a float\": [27]}"))
     }
     
     struct Watusi: JSONDecodable {
@@ -63,7 +63,7 @@ class IathetoTests: XCTestCase {
     
     func testKeyPath() {
         do {
-            let json = try JSON(string: "{\"float\": 73.2, \"numbers\": [2,7.0,9,99.3]}")
+            let json = try JSON(parsing: "{\"float\": 73.2, \"numbers\": [2,7.0,9,99.3]}")
             let float = json["numbers" +> .last].float!
             XCTAssertEqual(float, 99.3)
         } catch _ {
@@ -73,7 +73,7 @@ class IathetoTests: XCTestCase {
     
     func testDecodeStructWatusi() {
         do {
-            guard let watusi = try Watusi.decode(string: "{\"float\": 73, \"ints\": [2,7.0,9,null]}") else {
+            guard let watusi = try Watusi.decode(parsing: "{\"float\": 73, \"ints\": [2,7.0,9,null]}") else {
                 XCTFail()
                 return
             }
@@ -102,13 +102,22 @@ class IathetoTests: XCTestCase {
     
     func testDecodeClassAwesome() {
         do {
-            guard let awesome = try Awesome.decode(string: "{\"watusi\": {\"float\": 69.96, \"ints\": [8,4]}, \"level\": 42}") else {
+            guard let awesome = try Awesome.decode(parsing: "{\"watusi\": {\"float\": 69.96, \"ints\": [8,4]}, \"level\": 42}") else {
                 XCTFail()
                 return
             }
             XCTAssertEqual(awesome.level, 42)
         } catch _ {
             XCTFail()
+        }
+    }
+    
+    func testDecodingDates() {
+        do {
+            let json = try JSON(parsing: "{\"date\": \"2017-05-25T13:30:14\"}")
+            XCTAssertNotNil(json["date"].date)
+        } catch _ {
+            
         }
     }
 }
