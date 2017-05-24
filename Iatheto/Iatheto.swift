@@ -443,8 +443,8 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     
     public static var encodingDateFormatter = createDateFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public static var dateOnlyFormatter = createDateFormatter("yyyy-MM-dd")
-    public static var dateAndTimeFormatters = [encodingDateFormatter] + ["yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd"].map{ createDateFormatter($0) }
-    public static var decodingDateFormatters = [dateOnlyFormatter] + dateAndTimeFormatters
+    public static var dateAndTimeFormatters = [encodingDateFormatter] + ["yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss"].map{ createDateFormatter($0) }
+    public static var decodingDateFormatters = dateAndTimeFormatters + [dateOnlyFormatter]
     
     case null
     case string(String)
@@ -873,8 +873,8 @@ extension JSON: ExpressibleByBooleanLiteral {
 
 extension JSON: ExpressibleByArrayLiteral {
     
-    public init(arrayLiteral elements: Any...) {
-        try! self.init(elements as Any?)
+    public init(arrayLiteral elements: JSON...) {
+        self = .array(elements)
     }
     
 }
