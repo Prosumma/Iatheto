@@ -10,7 +10,7 @@ import XCTest
 @testable import Iatheto
 
 class IathetoTests: XCTestCase {
- 
+     
     func testDecodingString() {
         do {
             let json = try JSON(parsing: "[27, \"string\"]")
