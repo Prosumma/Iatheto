@@ -47,12 +47,16 @@ extension JSONDictionary: Collection {
     }
     
     public subscript(key: String) -> JSON {
-        get {
-            return dictionary[key] ?? .null
-        }
-        set {
-            dictionary[key] = newValue
-        }
+        get { return dictionary[key] ?? .null }
+        set { dictionary[key] = newValue }
+    }
+    
+    public func map(_ transform: (Dictionary<String, JSON>.Element) throws -> Dictionary<String, JSON>.Element) rethrows -> JSONDictionary {
+        return try JSONDictionary(dictionary.map(transform).dictionary())
+    }
+    
+    public func filter(_ predicate: (Dictionary<String, JSON>.Element) throws -> Bool) rethrows -> JSONDictionary {
+        return try JSONDictionary(dictionary.filter(predicate).dictionary())
     }
     
 }

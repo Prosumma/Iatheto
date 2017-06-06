@@ -35,8 +35,6 @@
 		F3A0598D1EE52CC00055FBE5 /* JSONEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A0598B1EE52CC00055FBE5 /* JSONEncodable.swift */; };
 		F3A0598F1EE52D080055FBE5 /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A0598E1EE52D080055FBE5 /* JSONCodable.swift */; };
 		F3A059901EE52D080055FBE5 /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A0598E1EE52D080055FBE5 /* JSONCodable.swift */; };
-		F3A059951EE52D5F0055FBE5 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A059941EE52D5F0055FBE5 /* Optional.swift */; };
-		F3A059961EE52D5F0055FBE5 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A059941EE52D5F0055FBE5 /* Optional.swift */; };
 		F3A059981EE52D750055FBE5 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A059971EE52D750055FBE5 /* Sequence.swift */; };
 		F3A059991EE52D750055FBE5 /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A059971EE52D750055FBE5 /* Sequence.swift */; };
 		F3A0599B1EE52D8F0055FBE5 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A0599A1EE52D8F0055FBE5 /* Array.swift */; };
@@ -90,7 +88,6 @@
 		F3A059881EE52C810055FBE5 /* JSONDecodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONDecodable.swift; sourceTree = "<group>"; };
 		F3A0598B1EE52CC00055FBE5 /* JSONEncodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEncodable.swift; sourceTree = "<group>"; };
 		F3A0598E1EE52D080055FBE5 /* JSONCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCodable.swift; sourceTree = "<group>"; };
-		F3A059941EE52D5F0055FBE5 /* Optional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		F3A059971EE52D750055FBE5 /* Sequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		F3A0599A1EE52D8F0055FBE5 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		F3A0599D1EE52DC70055FBE5 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
@@ -169,7 +166,6 @@
 				F3A0598B1EE52CC00055FBE5 /* JSONEncodable.swift */,
 				F3A059821EE52C3D0055FBE5 /* JSONError.swift */,
 				F3A059851EE52C4F0055FBE5 /* KeyPath.swift */,
-				F3A059941EE52D5F0055FBE5 /* Optional.swift */,
 				F3A059A91EE52E8B0055FBE5 /* Primitives.swift */,
 				F3A059AC1EE52F0B0055FBE5 /* RawRepresentable.swift */,
 				F3A059971EE52D750055FBE5 /* Sequence.swift */,
@@ -373,7 +369,6 @@
 				F3A0598F1EE52D080055FBE5 /* JSONCodable.swift in Sources */,
 				F3A059801EE526FF0055FBE5 /* JSONDictionary.swift in Sources */,
 				F3A059A11EE52DF00055FBE5 /* Set.swift in Sources */,
-				F3A059951EE52D5F0055FBE5 /* Optional.swift in Sources */,
 				F3A059861EE52C4F0055FBE5 /* KeyPath.swift in Sources */,
 				F3A0598C1EE52CC00055FBE5 /* JSONEncodable.swift in Sources */,
 				F3A059AA1EE52E8B0055FBE5 /* Primitives.swift in Sources */,
@@ -407,7 +402,6 @@
 				F3A059901EE52D080055FBE5 /* JSONCodable.swift in Sources */,
 				F3A059811EE526FF0055FBE5 /* JSONDictionary.swift in Sources */,
 				F3A059A21EE52DF00055FBE5 /* Set.swift in Sources */,
-				F3A059961EE52D5F0055FBE5 /* Optional.swift in Sources */,
 				F3A059871EE52C4F0055FBE5 /* KeyPath.swift in Sources */,
 				F3A0598D1EE52CC00055FBE5 /* JSONEncodable.swift in Sources */,
 				F3A059AB1EE52E8B0055FBE5 /* Primitives.swift in Sources */,

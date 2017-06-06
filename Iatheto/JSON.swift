@@ -368,18 +368,23 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             }
             return result
         }
+        set {
+            let keypaths = keypath.flatten()
+            if keypaths.count == 0 { return }
+            
+        }
     }
     
     public func filter(_ keypath: KeyPath, predicate: (JSON) -> Bool) -> JSON {
         if case .array(let array) = self[keypath] {
-            return .array(JSONArray(array.filter(predicate)))
+            return .array(array.filter(predicate))
         }
         return .null
     }
     
     public func map(_ keypath: KeyPath, transform: (JSON) throws -> JSON) rethrows -> JSON {
         if case .array(let array) = self[keypath] {
-            return try .array(JSONArray(array.map(transform)))
+            return try .array(array.map(transform))
         }
         return .null
     }

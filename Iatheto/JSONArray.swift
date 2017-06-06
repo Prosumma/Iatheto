@@ -50,31 +50,17 @@ extension JSONArray: Collection {
         }
     }
     
-    public subscript(keypath: KeyPath) -> JSON {
-        get {
-            let keypaths = keypath.flatten()
-            if keypaths.count == 0 { return .null }
-            let p: Int
-            switch keypaths[0] {
-            case .index(let i): p = i
-            case .last: p = count - 1
-            default: return .null
-            }
-            var json = self[p]
-            for keypath in keypaths.suffix(from: 1) {
-                json = json[keypath]
-            }
-            return json
-        }
-        set {
-            // TODO
-        }
-    }
-    
     public func index(after i: Int) -> Int {
         return array.index(after: i)
     }
     
+    public func map(_ transform: (JSON) throws -> JSON) rethrows -> JSONArray {
+        return try JSONArray(array.map(transform))
+    }
+    
+    public func filter(_ predicate: (JSON) throws -> Bool) rethrows -> JSONArray {
+        return try JSONArray(array.filter(predicate))
+    }
 }
 
 extension JSONArray: ExpressibleByArrayLiteral {

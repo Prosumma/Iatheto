@@ -8,18 +8,18 @@
 
 import Foundation
 
-extension Set where Element: JSONDecodable, Element: Hashable {
-    public static func decode(json: JSON, state: Any? = nil) throws -> Set<Element>? {
+public extension Set where Element: JSONDecodable, Element: Hashable {
+    static func decode(json: JSON, state: Any? = nil) throws -> Set<Element>? {
         guard let array: [Element] = try [Element].decode(json: json, state: state) else { return nil }
         return Set<Element>(array)
     }
     
-    public static func decode(parsing string: String, state: Any? = nil) throws -> Set<Element>? {
+    static func decode(parsing string: String, state: Any? = nil) throws -> Set<Element>? {
         let json = try JSON(parsing: string)
         return try decode(json: json, state: state)
     }
     
-    public static func decode(data: Data, state: Any? = nil) throws -> Set<Element>? {
+    static func decode(data: Data, state: Any? = nil) throws -> Set<Element>? {
         let json = try JSON(data: data)
         return try decode(json: json, state: state)
     }

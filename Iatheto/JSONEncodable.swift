@@ -15,16 +15,16 @@ public protocol JSONEncodable {
     func encode(state: Any?) throws -> JSON
 }
 
-extension JSONEncodable {
-    public func encode() throws -> JSON {
+public extension JSONEncodable {
+    func encode() throws -> JSON {
         return try encode(state: nil)
     }
     
-    public func encode(state: Any? = nil, options: JSONSerialization.WritingOptions = []) throws -> Data {
+    func encode(state: Any? = nil, options: JSONSerialization.WritingOptions = []) throws -> Data {
         return try encode(state: state).rawData()
     }
     
-    public func encode(state: Any? = nil, options: JSONSerialization.WritingOptions = []) throws -> String? {
+    func encode(state: Any? = nil, options: JSONSerialization.WritingOptions = []) throws -> String? {
         return try String(data: encode(state: state, options: options), encoding: .utf8)
     }
 }

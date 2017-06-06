@@ -16,7 +16,21 @@ fileprivate func cast<P, T>(_ value: P?) -> T? {
     return value as! T?
 }
 
+public extension Optional where Wrapped: JSONEncodable {
+    func encode(state: Any? = nil) throws -> JSON {
+        return try self?.encode(state: state) ?? .null
+    }
+}
+
+public extension Optional where Wrapped == JSON {
+    func decode<T: JSONDecodable>(state: Any? = nil) throws -> T? {
+        if self == nil { return nil }
+        return try T.decode(json: self!, state: state)
+    }
+}
+
 extension NSNull: JSONCodable {
+    
     public func encode(state: Any?) throws -> JSON {
         return .null
     }
@@ -38,6 +52,7 @@ extension NSNull: JSONCodable {
         let json = try JSON(data: data)
         return try decode(json: json, state: state)
     }
+    
 }
 
 extension NSNumber: JSONCodable {

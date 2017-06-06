@@ -57,16 +57,16 @@ extension KeyPath: ExpressibleByIntegerLiteral {
     }
 }
 
+public protocol KeyPathConvertible {
+    var iathetoKeyPath: KeyPath { get }
+}
+
 extension String: KeyPathConvertible {
     public var iathetoKeyPath: KeyPath { return .key(self) }
 }
 
 extension Int: KeyPathConvertible {
     public var iathetoKeyPath: KeyPath { return .index(self) }
-}
-
-public protocol KeyPathConvertible {
-    var iathetoKeyPath: KeyPath { get }
 }
 
 precedencegroup KeyPathPrecedence {
