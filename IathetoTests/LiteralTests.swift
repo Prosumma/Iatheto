@@ -11,23 +11,33 @@ import XCTest
 
 class LiteralTests: XCTestCase {
     
-    func testLiteralBoolean() {
+    func testBooleanLiteral() {
         let t: JSON = true
         XCTAssertTrue(t.bool!)
     }
     
-    func testLiteralString() {
+    func testStringLiteral() {
         let s: JSON = "JSON"
         XCTAssertEqual(s.string!, "JSON")
     }
     
-    func testLiteralFloat() {
+    func testFloatLiteral() {
         let f: JSON = 32.5
         XCTAssertEqual(f.float!, 32.5)
     }    
     
-    func testLiteralInteger() {
+    func testIntegerLiteral() {
         let i: JSON = 48
         XCTAssertEqual(i.int!, 48)
+    }
+    
+    func testNilLiteral() {
+        let n: JSON = nil
+        XCTAssertEqual(n, nil)
+    }
+    
+    func testArrayLiteral() {
+        let a: JSON = [JSON.string("ok"), JSON.null]
+        XCTAssertTrue(a.array != nil)
     }
 }

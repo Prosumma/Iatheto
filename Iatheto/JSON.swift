@@ -95,6 +95,11 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
     }
     
+    /**
+     Try to make a `T` from the given JSON. If this fails,
+     `decode` examines the result and if it is `null`, returns `nil`.
+     Otherwise, it raises `JSONError.undecodableJSON(self)`.
+    */
     public func decode<T>(make: (JSON) throws -> T?) throws -> T? {
         if let result = try make(self) { return result }
         if case .null = self { return nil }
@@ -158,9 +163,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         switch self {
         case .string(let string):
             for formatter in formatters {
-                if let date = formatter.date(from: string) {
-                    return date
-                }
+                if let date = formatter.date(from: string) { return date }
             }
             throw JSONError.undecodableJSON(self)
         case .null:
@@ -179,12 +182,8 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     }
     
     public var date: Date? {
-        get {
-            return (try? dateWithFormatters(JSON.decodingDateFormatters))!
-        }
-        set {
-            set(date: newValue, withFormatter: JSON.encodingDateFormatter)
-        }
+        get { return (try? dateWithFormatters(JSON.decodingDateFormatters))! }
+        set { set(date: newValue, withFormatter: JSON.encodingDateFormatter) }
     }
     
     public func numberWithFormatter(_ formatter: NumberFormatter) throws -> NSNumber? {
@@ -412,7 +411,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
     }
     
     public var description: String {
-        return try! String(data: rawData(.prettyPrinted), encoding: String.Encoding.utf8)!
+        return try! String(data: rawData(.prettyPrinted), encoding: .utf8)!
     }
     
     public var debugDescription: String {
