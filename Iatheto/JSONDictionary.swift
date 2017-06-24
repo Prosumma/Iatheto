@@ -8,6 +8,11 @@
 
 import Foundation
 
+/**
+ `JSONDictionary` is effectively the same as `Dictionary<Key, JSON>`
+ except that instead of returning `nil` when a key is not found, it
+ returns `JSON.null`.
+ */
 public struct JSONDictionary: Equatable {
     fileprivate var dictionary: [String: JSON]
     

@@ -9,8 +9,24 @@
 import Foundation
 
 public enum JSONError: Error {
+    /**
+     Thrown when a type cannot be encoded as JSON.
+    */
     case unencodableValue(Any)
+    /**
+     JSON is undecodable when it cannot be decoded
+     into the requested type. This is typically thrown
+     by `decode` and its overloads.
+    */
     case undecodableJSON(JSON)
-    case invalidState(Any?)
+    /**
+     Thrown when the state parameter of `decode` and `encode`
+     is unexpected.
+     
+     - note: Iatheto will never throw this error, but implementors
+     are encouraged to do so when the `state` parameter is not what
+     is expected by the method.
+    */
+    case unexpectedState(Any?)
 }
 

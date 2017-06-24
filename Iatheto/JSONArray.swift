@@ -8,6 +8,24 @@
 
 import Foundation
 
+/**
+ `JSONArray` is very similar to `Array<JSON>`, except that
+ it never fails when a positive index is subscripted, either
+ for access or assignment.
+ 
+ If a positive index is outside the bounds of the array,
+ `JSONArray` returns `JSON.null`. If an assignment is
+ made at a positive index that is outside the bounds of 
+ the array, the array is filled with `JSON.null`.
+ 
+ ```
+ var array = JSONArray()
+ array[3] = "4th item!"
+ ```
+ 
+ After `array[3]` is assigned in the example above, `array` is
+ equivalent to `[JSON.null, JSON.null, JSON.null, JSON.string("4th item!")]`.
+ */
 public struct JSONArray: Equatable {
     fileprivate var array: [JSON]
     
