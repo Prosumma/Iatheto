@@ -43,9 +43,8 @@ extension JSONArray: Collection {
             return array.indices.contains(position) ? array[position] : .null
         }
         set {
-            while position < array.count - 1 {
-                array.append(.null)
-            }
+            if position < 0 { array[position] = newValue } // This will throw an exception, which is what we want
+            while position > array.count - 1 { array.append(.null) }
             array[position] = newValue
         }
     }

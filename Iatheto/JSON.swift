@@ -320,7 +320,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             return array[index]
         }
         set {
-            // Creating a new array doesn't really work here
+            if array == nil { array = [] }
             array![index] = newValue
         }
     }
@@ -347,7 +347,7 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
                 let p: Int
                 switch first {
                 case .index(let i): p = i
-                case .last: p = array.count - 1
+                case .last: if array.count == 0 { return .null } else { p = array.count - 1 }
                 default: return .null
                 }
                 result = array[p]
@@ -369,8 +369,38 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
         }
         set {
             let keypaths = keypath.flatten()
-            if keypaths.count == 0 { return }
-            
+            switch keypaths.count {
+            case 0:
+                // This is where we do nothing
+                return
+            case 1:
+                // This is where we do our assignment
+                switch keypaths[0] {
+                case .index(let i):
+                    self[i] = newValue
+                case .last:
+                    let i = array?.count ?? 0
+                    self[i] = newValue
+                case .key(let key):
+                    self[key] = newValue
+                default:
+                    return
+                }
+            default:
+                // This is where we start recursion
+                let rest = KeyPath(keypaths.suffix(from: 1))
+                switch keypaths[0] {
+                case .index(let i):
+                    self[i][rest] = newValue
+                case .last:
+                    let i = array?.count ?? 0
+                    self[i][rest] = newValue
+                case .key(let key):
+                    self[key][rest] = newValue
+                default:
+                    return
+                }
+            }
         }
     }
     

@@ -35,4 +35,11 @@ class KeyPathTests: XCTestCase {
         }
     }
     
+    func testDeepKeyPathAssignment() {
+        var json: JSON = [:]
+        let keypath = .last +> "awesome" +> 4
+        json[keypath] = "Crazy!"
+        XCTAssertEqual(json[keypath], "Crazy!")
+    }
+    
 }
