@@ -37,9 +37,17 @@ class KeyPathTests: XCTestCase {
     
     func testDeepKeyPathAssignment() {
         var json: JSON = [:]
-        let keypath = .last +> "awesome" +> 4
-        json[keypath] = "Crazy!"
-        XCTAssertEqual(json[keypath], "Crazy!")
+        let baseKeyPath = .last +> "awesome"
+        let crazyKeyPath = baseKeyPath +> 4
+        let coolKeyPath = baseKeyPath +> 7
+        json[crazyKeyPath] = "crazy"
+        print(json)
+        XCTAssertEqual(json[crazyKeyPath], "crazy")
+        print(json)
+        json[coolKeyPath] = "cool"
+        print(json)
+        XCTAssertEqual(json[coolKeyPath], "cool")
+        XCTAssertEqual(json[crazyKeyPath], "crazy")        
     }
     
 }

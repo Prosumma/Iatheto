@@ -37,7 +37,8 @@ class LiteralTests: XCTestCase {
     }
     
     func testArrayLiteral() {
-        let a: JSON = [JSON.string("ok"), JSON.null]
+        var a: JSON = ["ok", 16, .null, true]
         XCTAssertTrue(a.array != nil)
+        XCTAssertEqual(a, ["ok", 16, .null, true])
     }
 }
