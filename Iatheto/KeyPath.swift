@@ -8,6 +8,13 @@
 
 import Foundation
 
+/**
+ A `KeyPath` is a convenient way to subscript `JSON`. Instead of
+ saying `json[3]["x"]`, one can say `json[3 +> "x"]`, where `+>`
+ is a custom operator for constructing a `KeyPath`. In addition to
+ the usual positional subscripts, `.last` is supported, whose meaning
+ should be obvious.
+ */
 public indirect enum KeyPath: KeyPathConvertible {
     case key(String)
     case index(Int)
@@ -54,6 +61,13 @@ extension KeyPath: ExpressibleByStringLiteral {
 extension KeyPath: ExpressibleByIntegerLiteral {
     public init(integerLiteral value: IntegerLiteralType) {
         self = .index(value)
+    }
+}
+
+extension KeyPath: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: KeyPathConvertible...) {
+        let elems = KeyPath.path(elements.map{ $0.iathetoKeyPath }).flatten()
+        self = .path(elems)
     }
 }
 
