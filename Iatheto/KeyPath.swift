@@ -42,6 +42,21 @@ public indirect enum KeyPath: KeyPathConvertible {
     }
     
     public var iathetoKeyPath: KeyPath { return self }
+
+    func position<C: Collection>(in collection: C?) -> Int? where C.Iterator.Element == JSON, C.Index == Int, C.IndexDistance == Int {
+        switch self {
+        case .last:
+            if let count = collection?.count, count > 0 {
+                return count - 1
+            } else {
+                return 0
+            }
+        case .index(let i):
+            return i
+        default:
+            return nil
+        }
+    }
 }
 
 extension KeyPath: ExpressibleByStringLiteral {

@@ -56,6 +56,43 @@ extension JSONDictionary: Collection {
         set { dictionary[key] = newValue }
     }
     
+    public subscript(keypath: KeyPath) -> JSON {
+        get {
+            let keypaths = keypath.flatten()
+            switch keypaths.count {
+            case 0:
+                return .null
+            case 1:
+                if case .key(let key) = keypaths[0] {
+                    return self[key]
+                }
+                return .null
+            default:
+                if case .key(let key) = keypaths[0] {
+                    let rest = KeyPath(keypaths.suffix(from: 1))
+                    return self[key][rest]
+                }
+                return .null
+            }
+        }
+        set {
+            let keypaths = keypath.flatten()
+            switch keypaths.count {
+            case 0:
+                return
+            case 1:
+                if case .key(let key) = keypaths[0] {
+                    self[key] = newValue
+                }
+            default:
+                if case .key(let key) = keypaths[0] {
+                    let rest = KeyPath(keypaths.suffix(from: 1))
+                    self[key][rest] = newValue
+                }
+            }
+        }
+    }
+    
     public func map(_ transform: (Dictionary<String, JSON>.Element) throws -> Dictionary<String, JSON>.Element) rethrows -> JSONDictionary {
         return try JSONDictionary(dictionary.map(transform).dictionary())
     }

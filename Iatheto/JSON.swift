@@ -320,7 +320,9 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             return array[index]
         }
         set {
-            if array == nil { array = [] }
+            if array == nil {
+                array = []
+            }
             array![index] = newValue
         }
     }
@@ -331,7 +333,9 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
             return dictionary[key]
         }
         set {
-            if dictionary == nil { dictionary = [:] }
+            if dictionary == nil {
+                dictionary = [:]
+            }
             dictionary![key] = newValue
         }
     }
@@ -379,7 +383,12 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
                 case .index(let i):
                     self[i] = newValue
                 case .last:
-                    let i = array?.count ?? 0
+                    let i: Int
+                    if let count = array?.count, count > 0 {
+                        i = count - 1
+                    } else {
+                        i = 0
+                    }
                     self[i] = newValue
                 case .key(let key):
                     self[key] = newValue
@@ -393,7 +402,12 @@ public indirect enum JSON: CustomStringConvertible, CustomDebugStringConvertible
                 case .index(let i):
                     self[i][rest] = newValue
                 case .last:
-                    let i = array?.count ?? 0
+                    let i: Int
+                    if let count = array?.count, count > 0 {
+                        i = count - 1
+                    } else {
+                        i = 0
+                    }
                     self[i][rest] = newValue
                 case .key(let key):
                     self[key][rest] = newValue

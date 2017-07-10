@@ -62,8 +62,47 @@ extension JSONArray: Collection {
         }
         set {
             if position < 0 { array[position] = newValue } // This will throw an exception, which is what we want
-            while position > array.count - 1 { array.append(.null) }
+            while position > array.count - 1 {
+                array.append(.null)
+            }
             array[position] = newValue
+        }
+    }
+    
+    public subscript(keypath: KeyPath) -> JSON {
+        get {
+            let keypaths = keypath.flatten()
+            switch keypaths.count {
+            case 0:
+                return .null
+            case 1:
+                if let p = keypaths[0].position(in: self) {
+                    return self[p]
+                }
+                return .null
+            default:
+                if let p = keypaths[0].position(in: self) {
+                    let rest = KeyPath(keypaths.suffix(from: 1))
+                    return self[p][rest]
+                }
+                return .null
+            }
+        }
+        set {
+            let keypaths = keypath.flatten()
+            switch keypaths.count {
+            case 0:
+                return
+            case 1:
+                if let p = keypaths[0].position(in: self) {
+                    array[p] = newValue
+                }
+            default:
+                if let p = keypaths[0].position(in: self) {
+                    let rest = KeyPath(keypaths.suffix(from: 1))
+                    array[p][rest] = newValue
+                }
+            }
         }
     }
     
