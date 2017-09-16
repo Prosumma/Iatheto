@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension Set where Element: JSONDecodable, Element: Hashable {
+public extension Set where Element: JSONDecodable {
     static func decode(json: JSON, state: Any? = nil) throws -> Set<Element>? {
         guard let array: [Element] = try [Element].decode(json: json, state: state) else { return nil }
         return Set<Element>(array)
