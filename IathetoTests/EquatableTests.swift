@@ -17,10 +17,22 @@ class EquatableTests: XCTestCase {
         XCTAssertEqual(n1, n2)
     }
     
+    func testUnequatableJSONNumbers() {
+        let n1: JSON = 33
+        let n2: JSON = 944.36
+        XCTAssertNotEqual(n1, n2)
+    }
+    
     func testEquatableJSONStrings() {
         let s1: JSON = "JSON"
         let s2: JSON = "JSON"
         XCTAssertEqual(s1, s2)
+    }
+    
+    func testUnequatableJSONStrings() {
+        let s1: JSON = "JSON"
+        let s2: JSON = "XML"
+        XCTAssertNotEqual(s1, s2)
     }
     
     func testEquatableJSONArrays() {
@@ -31,6 +43,12 @@ class EquatableTests: XCTestCase {
         } catch let e {
             XCTFail(String(describing: e))
         }
+    }
+    
+    func testUnequatableJSONArrays() {
+        let a1: JSON = [7, "JSON"]
+        let a2: JSON = [99, "XML"]
+        XCTAssertNotEqual(a1, a2)
     }
     
     func testEquatableJSONDictionaries() {
@@ -44,10 +62,21 @@ class EquatableTests: XCTestCase {
         }
     }
     
+    func testUnequatableJSONDictionaries() {
+        let d1: JSON = ["array": [9, 11, 14, "JSON"]]
+        let d2: JSON = ["dictionary": ["value": "xml"]]
+        XCTAssertNotEqual(d1, d2)
+    }
+    
     func testEquatableJSONNulls() {
         let null1 = JSON.null
         let null2: JSON = nil
         XCTAssertEqual(null1, null2)
     }
     
+    func testUnequatableJSON() {
+        let j1: JSON = 48
+        let j2: JSON = ["dictionary": ["value": [9, 8, 7]]]
+        XCTAssertNotEqual(j1, j2)
+    }
 }
