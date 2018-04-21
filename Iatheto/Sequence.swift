@@ -16,7 +16,7 @@ public extension Sequence where Iterator.Element: JSONEncodable {
 
 public extension Sequence where Iterator.Element == JSON {
     func decode<T: JSONDecodable>(state: Any? = nil) throws -> [T] {
-        return try flatMap{ try T.decode(json: $0, state: state) }
+        return try compactMap{ try T.decode(json: $0, state: state) }
     }
     
     func decode<T: JSONDecodable>(state: Any? = nil) throws -> [T?] {

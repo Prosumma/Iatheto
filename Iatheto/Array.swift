@@ -14,7 +14,7 @@ public extension Array where Element: JSONDecodable {
      are removed from the resulting array.
     */
     static func decode(json: JSON, state: Any? = nil) throws -> [Element]? {
-        return try json.decodeArray{ array in try array.flatMap{ try Element.decode(json: $0, state: state) } }
+        return try json.decodeArray{ array in try array.compactMap{ try Element.decode(json: $0, state: state) } }
     }
     
     /**

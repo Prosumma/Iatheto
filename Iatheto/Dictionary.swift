@@ -12,7 +12,7 @@ public extension Dictionary where Key == String, Value: JSONDecodable {
     
     static func decode(json: JSON, state: Any? = nil) throws -> Dictionary<Key, Value>? {
         return try json.decodeDictionary { dictionary in
-            return try dictionary.flatMap {
+            return try dictionary.compactMap {
                 guard let value = try Value.decode(json: $0.1, state: state) else { return nil }
                 return (key: $0.0, value: value)
                 }.dictionary()
@@ -58,9 +58,9 @@ public extension Dictionary where Key == String, Value: JSONEncodable {
 
 public extension Dictionary where Value == JSON {
     func decode<T: JSONDecodable>(state: Any? = nil) throws -> [Key: T] {
-        return try flatMap {
-            guard let value = try T.decode(json: $0.1, state: state) else { return nil }
-            return (key: $0.0, value: value)
+        return try compactMap {
+                guard let value = try T.decode(json: $0.1, state: state) else { return nil }
+                return (key: $0.0, value: value)
             }.dictionary()
     }
     
