@@ -61,6 +61,23 @@ public extension JSON {
         }
     }
     
+    var int64: Int64? {
+        get {
+            if case let .int(value) = self {
+                return value
+            } else {
+                return nil
+            }
+        }
+        set {
+            if let int64 = newValue {
+                self = .int(int64)
+            } else {
+                self = .null
+            }
+        }
+    }
+    
     var float: Float? {
         get {
             if case let .float(value) = self {

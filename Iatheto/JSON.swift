@@ -26,11 +26,6 @@ public enum JSON: Codable {
                 { try JSON.string(container.decode(String.self)) },
                 {
                     do {
-                        /*
-                         If the current node is a floating-point number,
-                         this throws DecodingError.dataCorrupted rather
-                         than DecodingError.typeMismatch, so we need to convert it.
-                        */
                         return try JSON.int(container.decode(Int64.self))
                     } catch DecodingError.dataCorrupted(let context) {
                         throw DecodingError.typeMismatch(Int64.self, context)
