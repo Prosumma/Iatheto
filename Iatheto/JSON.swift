@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum JSON: Codable {
+public enum JSON: Codable, Equatable {
     case null
     case bool(Bool)
     case string(String)
