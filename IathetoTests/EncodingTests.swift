@@ -12,7 +12,7 @@ import Iatheto
 class EncodingTests: XCTestCase {
     
     func testEncoding() throws {
-        let json: JSON = [1, 2, 3, nil, ["Amounts": [7, 9]]]
+        let json: JSON = [1, 2, 3, nil, ["Amounts": [7, 9.8334]]]
         try print(json.encoded() as String)
     }
         
