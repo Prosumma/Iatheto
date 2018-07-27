@@ -10,7 +10,7 @@ import Foundation
 
 public extension JSON {
     
-    init(value: [JSON]) {
+    init(_ value: [JSON]) {
         self = .array(value)
     }
     
@@ -31,7 +31,7 @@ public extension JSON {
         }
     }
     
-    init(value: [String: JSON]) {
+    init(_ value: [String: JSON]) {
         self = .dictionary(value)
     }
     
@@ -52,7 +52,7 @@ public extension JSON {
         }
     }
     
-    init(value: Int) {
+    init(_ value: Int) {
         self = .number(Decimal(value))
     }
     
@@ -73,7 +73,7 @@ public extension JSON {
         }
     }
     
-    init(value: Int64) {
+    init(_ value: Int64) {
         self = .number(Decimal(value))
     }
     
@@ -94,7 +94,7 @@ public extension JSON {
         }
     }
     
-    init(value: Float) {
+    init(_ value: Float) {
         self = .number(Decimal(Double(value)))
     }
     
@@ -115,7 +115,7 @@ public extension JSON {
         }
     }
     
-    init(value: Decimal) {
+    init(_ value: Decimal) {
         self = .number(value)
     }
     
@@ -136,7 +136,7 @@ public extension JSON {
         }
     }
     
-    init(value: Double) {
+    init(_ value: Double) {
         self = .number(Decimal(value))
     }
     
@@ -157,7 +157,7 @@ public extension JSON {
         }
     }
     
-    init(value: String) {
+    init(_ value: String) {
         self = .string(value)
     }
     
