@@ -15,5 +15,5 @@ class EncodingTests: XCTestCase {
         let json: JSON = [1, 2, 3, nil, ["Amounts": [7, 9]]]
         try print(json.encoded() as String)
     }
-    
+        
 }

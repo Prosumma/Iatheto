@@ -19,7 +19,7 @@ extension JSON: ExpressibleByStringLiteral {
 extension JSON: ExpressibleByIntegerLiteral {
     
     public init(integerLiteral value: Int64) {
-        self = .int(Int64(value))
+        self = .number(Decimal(value))
     }
     
 }
@@ -27,7 +27,7 @@ extension JSON: ExpressibleByIntegerLiteral {
 extension JSON: ExpressibleByFloatLiteral {
     
     public init(floatLiteral value: Double) {
-        self = .float(Decimal(value))
+        self = .number(Decimal(value))
     }
     
 }

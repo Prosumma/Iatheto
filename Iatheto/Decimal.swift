@@ -9,12 +9,23 @@
 import Foundation
 
 extension Decimal {
-    var doubleValue: Double {
-        let n = NSDecimalNumber(decimal: self)
-        return n.doubleValue
+    func to<Value>(_ keyPath: KeyPath<NSDecimalNumber, Value>) -> Value {
+        return NSDecimalNumber(decimal: self)[keyPath: keyPath]
     }
+    
+    var doubleValue: Double {
+        return to(\.doubleValue)
+    }
+    
     var floatValue: Float {
-        let n = NSDecimalNumber(decimal: self)
-        return n.floatValue
+        return to(\.floatValue)
+    }
+    
+    var intValue: Int {
+        return to(\.intValue)
+    }
+    
+    var int64Value: Int64 {
+        return to(\.int64Value)
     }
 }

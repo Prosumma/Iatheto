@@ -12,8 +12,7 @@ public enum JSON: Codable, Equatable {
     case null
     case bool(Bool)
     case string(String)
-    case int(Int64)
-    case float(Decimal)
+    case number(Decimal)
     case array([JSON])
     case dictionary([String: JSON])
     
@@ -24,14 +23,7 @@ public enum JSON: Codable, Equatable {
         } else {
             self = try attempt(
                 { try JSON.string(container.decode(String.self)) },
-                {
-                    do {
-                        return try JSON.int(container.decode(Int64.self))
-                    } catch DecodingError.dataCorrupted(let context) {
-                        throw DecodingError.typeMismatch(Int64.self, context)
-                    }
-                },
-                { try JSON.float(container.decode(Decimal.self)) },
+                { try JSON.number(container.decode(Decimal.self)) },
                 { try JSON.bool(container.decode(Bool.self)) },
                 { try JSON.array(container.decode([JSON].self)) },
                 { try JSON.dictionary(container.decode([String: JSON].self)) }
@@ -63,8 +55,7 @@ public enum JSON: Codable, Equatable {
         case .null: try container.encodeNil()
         case let .bool(value): try container.encode(value)
         case let .string(value): try container.encode(value)
-        case let .int(value): try container.encode(value)
-        case let .float(value): try container.encode(value)
+        case let .number(value): try container.encode(value)
         case let .array(value): try container.encode(value)
         case let .dictionary(value): try container.encode(value)
         }

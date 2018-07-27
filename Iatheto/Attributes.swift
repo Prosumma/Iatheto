@@ -53,20 +53,20 @@ public extension JSON {
     }
     
     init(value: Int) {
-        self = .int(Int64(value))
+        self = .number(Decimal(value))
     }
     
     var int: Int? {
         get {
-            if case let .int(value) = self {
-                return Int(value)
+            if case let .number(value) = self {
+                return value.intValue
             } else {
                 return nil
             }
         }
         set {
             if let int = newValue {
-                self = .int(Int64(int))
+                self = .number(Decimal(int))
             } else {
                 self = .null
             }
@@ -74,20 +74,20 @@ public extension JSON {
     }
     
     init(value: Int64) {
-        self = .int(value)
+        self = .number(Decimal(value))
     }
     
     var int64: Int64? {
         get {
-            if case let .int(value) = self {
-                return value
+            if case let .number(value) = self {
+                return value.int64Value
             } else {
                 return nil
             }
         }
         set {
             if let int64 = newValue {
-                self = .int(int64)
+                self = .number(Decimal(int64))
             } else {
                 self = .null
             }
@@ -95,12 +95,12 @@ public extension JSON {
     }
     
     init(value: Float) {
-        self = .float(Decimal(Double(value)))
+        self = .number(Decimal(Double(value)))
     }
     
     var float: Float? {
         get {
-            if case let .float(value) = self {
+            if case let .number(value) = self {
                 return value.floatValue
             } else {
                 return nil
@@ -108,7 +108,7 @@ public extension JSON {
         }
         set {
             if let float = newValue {
-                self = .float(Decimal(Double(float)))
+                self = .number(Decimal(Double(float)))
             } else {
                 self = .null
             }
@@ -116,12 +116,12 @@ public extension JSON {
     }
     
     init(value: Decimal) {
-        self = .float(value)
+        self = .number(value)
     }
     
     var decimal: Decimal? {
         get {
-            if case let .float(value) = self {
+            if case let .number(value) = self {
                 return value
             } else {
                 return nil
@@ -129,7 +129,7 @@ public extension JSON {
         }
         set {
             if let decimal = newValue {
-                self = .float(decimal)
+                self = .number(decimal)
             } else {
                 self = .null
             }
@@ -137,12 +137,12 @@ public extension JSON {
     }
     
     init(value: Double) {
-        self = .float(Decimal(value))
+        self = .number(Decimal(value))
     }
     
     var double: Double? {
         get {
-            if case let .float(value) = self {
+            if case let .number(value) = self {
                 return value.doubleValue
             } else {
                 return nil
@@ -150,7 +150,7 @@ public extension JSON {
         }
         set {
             if let double = newValue {
-                self = .float(Decimal(double))
+                self = .number(Decimal(double))
             } else {
                 self = .null
             }
