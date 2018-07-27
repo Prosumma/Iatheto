@@ -11,6 +11,8 @@
 		F3591FC51C86077500DD13F5 /* Iatheto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3591FBA1C86077500DD13F5 /* Iatheto.framework */; };
 		F3591FE31C8608D900DD13F5 /* Iatheto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3591FD91C8608D900DD13F5 /* Iatheto.framework */; };
 		F3591FF01C8609BC00DD13F5 /* Iatheto.h in Headers */ = {isa = PBXBuildFile; fileRef = F3591FBD1C86077500DD13F5 /* Iatheto.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3707E7F210B0B3000ACD532 /* Decimal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3707E7E210B0B3000ACD532 /* Decimal.swift */; };
+		F3707E80210B0B3000ACD532 /* Decimal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3707E7E210B0B3000ACD532 /* Decimal.swift */; };
 		F38A6707208AF98800C2D7B9 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38A6706208AF98800C2D7B9 /* JSON.swift */; };
 		F38A6708208AF98800C2D7B9 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38A6706208AF98800C2D7B9 /* JSON.swift */; };
 		F38CAD74208C479D00E71E90 /* DecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38CAD73208C479D00E71E90 /* DecodingTests.swift */; };
@@ -56,6 +58,7 @@
 		F3591FCB1C86077500DD13F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F3591FD91C8608D900DD13F5 /* Iatheto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Iatheto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3591FE21C8608D900DD13F5 /* IathetoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IathetoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3707E7E210B0B3000ACD532 /* Decimal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decimal.swift; sourceTree = "<group>"; };
 		F38A6706208AF98800C2D7B9 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		F38CAD73208C479D00E71E90 /* DecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodingTests.swift; sourceTree = "<group>"; };
 		F38CAD76208C491000E71E90 /* EncodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncodingTests.swift; sourceTree = "<group>"; };
@@ -126,11 +129,12 @@
 			children = (
 				F3591FBD1C86077500DD13F5 /* Iatheto.h */,
 				F3591FBF1C86077500DD13F5 /* Info.plist */,
-				F38A6706208AF98800C2D7B9 /* JSON.swift */,
 				F38CAD79208C52FD00E71E90 /* Attempt.swift */,
-				F38CAD7C208C535400E71E90 /* Dictionary.swift */,
-				F38CAD7F208C53C300E71E90 /* Literal.swift */,
 				F38CAD82208C59D100E71E90 /* Attributes.swift */,
+				F3707E7E210B0B3000ACD532 /* Decimal.swift */,
+				F38CAD7C208C535400E71E90 /* Dictionary.swift */,
+				F38A6706208AF98800C2D7B9 /* JSON.swift */,
+				F38CAD7F208C53C300E71E90 /* Literal.swift */,
 				F3CFB887208CDA12001A644E /* Subscript.swift */,
 			);
 			path = Iatheto;
@@ -334,6 +338,7 @@
 				F38CAD83208C59D100E71E90 /* Attributes.swift in Sources */,
 				F38CAD7D208C535400E71E90 /* Dictionary.swift in Sources */,
 				F3CFB888208CDA12001A644E /* Subscript.swift in Sources */,
+				F3707E7F210B0B3000ACD532 /* Decimal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +361,7 @@
 				F38CAD84208C59D100E71E90 /* Attributes.swift in Sources */,
 				F38CAD7E208C535400E71E90 /* Dictionary.swift in Sources */,
 				F3CFB889208CDA12001A644E /* Subscript.swift in Sources */,
+				F3707E80210B0B3000ACD532 /* Decimal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

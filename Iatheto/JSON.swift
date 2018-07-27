@@ -13,7 +13,7 @@ public enum JSON: Codable, Equatable {
     case bool(Bool)
     case string(String)
     case int(Int64)
-    case float(Double)
+    case float(Decimal)
     case array([JSON])
     case dictionary([String: JSON])
     
@@ -31,14 +31,14 @@ public enum JSON: Codable, Equatable {
                         throw DecodingError.typeMismatch(Int64.self, context)
                     }
                 },
-                { try JSON.float(container.decode(Double.self)) },
+                { try JSON.float(container.decode(Decimal.self)) },
                 { try JSON.bool(container.decode(Bool.self)) },
                 { try JSON.array(container.decode([JSON].self)) },
                 { try JSON.dictionary(container.decode([String: JSON].self)) }
             )
         }
     }
-    
+        
     public init(parsing data: Data) throws {
         let decoder = JSONDecoder()
         self = try decoder.decode(JSON.self, from: data)

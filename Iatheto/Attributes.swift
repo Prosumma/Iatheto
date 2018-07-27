@@ -10,6 +10,10 @@ import Foundation
 
 public extension JSON {
     
+    init(value: [JSON]) {
+        self = .array(value)
+    }
+    
     var array: [JSON]? {
         get {
             if case let .array(value) = self {
@@ -25,6 +29,10 @@ public extension JSON {
                 self = .null
             }
         }
+    }
+    
+    init(value: [String: JSON]) {
+        self = .dictionary(value)
     }
     
     var dictionary: [String: JSON]? {
@@ -44,6 +52,10 @@ public extension JSON {
         }
     }
     
+    init(value: Int) {
+        self = .int(Int64(value))
+    }
+    
     var int: Int? {
         get {
             if case let .int(value) = self {
@@ -59,6 +71,10 @@ public extension JSON {
                 self = .null
             }
         }
+    }
+    
+    init(value: Int64) {
+        self = .int(value)
     }
     
     var int64: Int64? {
@@ -78,24 +94,32 @@ public extension JSON {
         }
     }
     
+    init(value: Float) {
+        self = .float(Decimal(Double(value)))
+    }
+    
     var float: Float? {
         get {
             if case let .float(value) = self {
-                return Float(value)
+                return value.floatValue
             } else {
                 return nil
             }
         }
         set {
             if let float = newValue {
-                self = .float(Double(float))
+                self = .float(Decimal(Double(float)))
             } else {
                 self = .null
             }
         }
     }
     
-    var double: Double? {
+    init(value: Decimal) {
+        self = .float(value)
+    }
+    
+    var decimal: Decimal? {
         get {
             if case let .float(value) = self {
                 return value
@@ -104,12 +128,37 @@ public extension JSON {
             }
         }
         set {
-            if let double = newValue {
-                self = .float(double)
+            if let decimal = newValue {
+                self = .float(decimal)
             } else {
                 self = .null
             }
         }
+    }
+    
+    init(value: Double) {
+        self = .float(Decimal(value))
+    }
+    
+    var double: Double? {
+        get {
+            if case let .float(value) = self {
+                return value.doubleValue
+            } else {
+                return nil
+            }
+        }
+        set {
+            if let double = newValue {
+                self = .float(Decimal(double))
+            } else {
+                self = .null
+            }
+        }
+    }
+    
+    init(value: String) {
+        self = .string(value)
     }
     
     var string: String? {

@@ -10,15 +10,7 @@ import Foundation
 
 extension JSON: ExpressibleByStringLiteral {
     
-    public init(stringLiteral value: StringLiteralType) {
-        self = .string(value)
-    }
-    
-    public init(extendedGraphemeClusterLiteral value: StringLiteralType) {
-        self = .string(value)
-    }
-    
-    public init(unicodeScalarLiteral value: StringLiteralType) {
+    public init(stringLiteral value: String) {
         self = .string(value)
     }
     
@@ -26,7 +18,7 @@ extension JSON: ExpressibleByStringLiteral {
 
 extension JSON: ExpressibleByIntegerLiteral {
     
-    public init(integerLiteral value: IntegerLiteralType) {
+    public init(integerLiteral value: Int64) {
         self = .int(Int64(value))
     }
     
@@ -34,15 +26,15 @@ extension JSON: ExpressibleByIntegerLiteral {
 
 extension JSON: ExpressibleByFloatLiteral {
     
-    public init(floatLiteral value: FloatLiteralType) {
-        self = .float(value)
+    public init(floatLiteral value: Double) {
+        self = .float(Decimal(value))
     }
     
 }
 
 extension JSON: ExpressibleByBooleanLiteral {
     
-    public init(booleanLiteral value: BooleanLiteralType) {
+    public init(booleanLiteral value: Bool) {
         self = .bool(value)
     }
     
