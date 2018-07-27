@@ -4,6 +4,7 @@
     "name": "Cake",
     "ppu": 0.55,
     "x": 77,
+    "z": 1e+6,
     "batters":
     {
         "batter":
