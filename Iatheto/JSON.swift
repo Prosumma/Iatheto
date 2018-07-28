@@ -8,6 +8,18 @@
 
 import Foundation
 
+/**
+ Encodes and decodes arbitrary JSON while conforming
+ to Apple's Codable protocol.
+ 
+ - warning: The `Decimal` type, which is used to represent
+ numbers, is not guaranteed to preserve the exact value of
+ the number as transmitted. This problem is not specific to
+ Iatheto, but is rather a limitation of `NSJSONSerialization`,
+ which is used by Apple's frameworks to serialize JSON. In
+ most cases, however, `Decimal` better preserves numbers than
+ `Float` or `Double`.
+ */
 public enum JSON: Codable, Equatable {
     case null
     case bool(Bool)
