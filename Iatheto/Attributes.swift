@@ -157,6 +157,27 @@ public extension JSON {
         }
     }
     
+    init(_ value: NSNumber) {
+        self = .number(value.decimalValue)
+    }
+    
+    var number: NSNumber? {
+        get {
+            if case let .number(value) = self {
+                return NSDecimalNumber(decimal: value)
+            } else {
+                return nil
+            }
+        }
+        set {
+            if let decimal = newValue {
+                self = .number(decimal.decimalValue)
+            } else {
+                self = .null
+            }
+        }
+    }
+    
     init(_ value: String) {
         self = .string(value)
     }
