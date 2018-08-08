@@ -24,6 +24,7 @@ import Foundation
  most cases, however, `Decimal` better preserves numbers than
  `Float` or `Double`.
  */
+@dynamicMemberLookup
 public enum JSON: Codable, Equatable {
     /// Represents a JSON `null`.
     case null
@@ -62,6 +63,10 @@ public enum JSON: Codable, Equatable {
     /// Initialization by parsing the given `String` as JSON.
     public init(parsing string: String) throws {
         try self.init(parsing: string.data(using: .utf8, allowLossyConversion: false)!)
+    }
+    
+    public subscript(dynamicMember member: String) -> JSON? {
+        return self[member]
     }
     
     /**
