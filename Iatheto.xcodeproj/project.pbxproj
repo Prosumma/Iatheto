@@ -11,6 +11,8 @@
 		F3591FC51C86077500DD13F5 /* Iatheto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3591FBA1C86077500DD13F5 /* Iatheto.framework */; };
 		F3591FE31C8608D900DD13F5 /* Iatheto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3591FD91C8608D900DD13F5 /* Iatheto.framework */; };
 		F3591FF01C8609BC00DD13F5 /* Iatheto.h in Headers */ = {isa = PBXBuildFile; fileRef = F3591FBD1C86077500DD13F5 /* Iatheto.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F36CA194211D5CCC003EAA16 /* IathetoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36CA193211D5CCC003EAA16 /* IathetoTests.swift */; };
+		F36CA195211D5CCC003EAA16 /* IathetoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36CA193211D5CCC003EAA16 /* IathetoTests.swift */; };
 		F3707E7F210B0B3000ACD532 /* Decimal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3707E7E210B0B3000ACD532 /* Decimal.swift */; };
 		F3707E80210B0B3000ACD532 /* Decimal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3707E7E210B0B3000ACD532 /* Decimal.swift */; };
 		F38A6707208AF98800C2D7B9 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38A6706208AF98800C2D7B9 /* JSON.swift */; };
@@ -58,6 +60,7 @@
 		F3591FCB1C86077500DD13F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F3591FD91C8608D900DD13F5 /* Iatheto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Iatheto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3591FE21C8608D900DD13F5 /* IathetoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IathetoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F36CA193211D5CCC003EAA16 /* IathetoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IathetoTests.swift; sourceTree = "<group>"; };
 		F3707E7E210B0B3000ACD532 /* Decimal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decimal.swift; sourceTree = "<group>"; };
 		F38A6706208AF98800C2D7B9 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		F38CAD73208C479D00E71E90 /* DecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodingTests.swift; sourceTree = "<group>"; };
@@ -143,10 +146,11 @@
 		F3591FC81C86077500DD13F5 /* IathetoTests */ = {
 			isa = PBXGroup;
 			children = (
+				F3E533C8208CE272007AE374 /* json.json */,
 				F3591FCB1C86077500DD13F5 /* Info.plist */,
 				F38CAD73208C479D00E71E90 /* DecodingTests.swift */,
 				F38CAD76208C491000E71E90 /* EncodingTests.swift */,
-				F3E533C8208CE272007AE374 /* json.json */,
+				F36CA193211D5CCC003EAA16 /* IathetoTests.swift */,
 			);
 			path = IathetoTests;
 			sourceTree = "<group>";
@@ -347,6 +351,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F38CAD77208C491000E71E90 /* EncodingTests.swift in Sources */,
+				F36CA194211D5CCC003EAA16 /* IathetoTests.swift in Sources */,
 				F38CAD74208C479D00E71E90 /* DecodingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -370,6 +375,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F38CAD78208C491000E71E90 /* EncodingTests.swift in Sources */,
+				F36CA195211D5CCC003EAA16 /* IathetoTests.swift in Sources */,
 				F38CAD75208C479D00E71E90 /* DecodingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
