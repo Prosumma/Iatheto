@@ -178,6 +178,13 @@ public extension JSON {
         }
     }
     
+    var isNull: Bool {
+        if case .null = self {
+            return true
+        }
+        return false
+    }
+    
     init(_ value: NSNumber) {
         self = .number(value.decimalValue)
     }
