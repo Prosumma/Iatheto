@@ -31,6 +31,27 @@ public extension JSON {
         }
     }
     
+    init(_ value: Bool) {
+        self = .bool(value)
+    }
+    
+    var bool: Bool? {
+        get {
+            if case let .bool(value) = self {
+                return value
+            } else {
+                return nil
+            }
+        }
+        set {
+            if let bool = newValue {
+                self = .bool(bool)
+            } else {
+                self = .null
+            }
+        }
+    }
+    
     init(_ value: [String: JSON]) {
         self = .dictionary(value)
     }
