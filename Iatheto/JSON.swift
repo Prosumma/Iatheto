@@ -25,7 +25,7 @@ import Foundation
  `Float` or `Double`.
  */
 @dynamicMemberLookup
-public enum JSON: Codable, Equatable {
+public enum JSON: Codable, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
     /// Represents a JSON `null`.
     case null
     /// Represents a JSON Boolean value.
@@ -103,5 +103,28 @@ public enum JSON: Codable, Equatable {
         }
     }
     
+    public var description: String {
+        switch self {
+        case .string(let string): return string
+        case .number(let number): return "\(number)"
+        case .bool(let bool): return "\(bool)"
+        case .null: return ""
+        case .array(let array): return "\(array)"
+        case .dictionary(let dictionary): return "\(dictionary)"
+        }
+    }
+    
+    public var debugDescription: String {
+        switch self {
+        case .string(let string): return "\"\(string)\""
+        case .number(let number): return "\(number)"
+        case .bool(let bool): return "\(bool)"
+        case .null: return "null"
+        case .array, .dictionary:
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            return try! encoded(by: encoder)
+        }
+    }
 }
 

@@ -19,9 +19,9 @@ class DecodingTests: XCTestCase {
         let data = try Data(contentsOf: url)
         do {
             let json = try JSON(parsing: data)
-            print(json)
+            debugPrint(json)
         } catch let e {
-            print(e)
+            debugPrint(e)
             throw e
         }
     }
