@@ -3,9 +3,14 @@ import XCTest
 
 final class IathetoTests: XCTestCase {
     func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(Iatheto().text, "Hello, World!")
+      let json1: JSON = ["ok": [3, nil]]
+      let encoder = JSONEncoder()
+      let jsonData = try encoder.encode(json1)
+      print(String(data: jsonData, encoding: .utf8)!)
+      let decoder = JSONDecoder()
+      var json2 = try decoder.decode(JSON.self, from: jsonData)
+      XCTAssertEqual(json1, json2)
+      json2["ok"]?[1] = "Yeah"
+      print(json2)
     }
 }
