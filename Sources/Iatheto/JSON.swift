@@ -26,7 +26,7 @@ public extension JSON {
       if newValue { self = .null }
     }
   }
-  
+
   var string: String? {
     get {
       guard case .string(let value) = self else { return nil }
@@ -36,7 +36,7 @@ public extension JSON {
       self = newValue.flatMap(JSON.string) ?? .null
     }
   }
-  
+
   var bool: Bool? {
     get {
       guard case .bool(let value) = self else { return nil }
@@ -46,7 +46,7 @@ public extension JSON {
       self = newValue.flatMap(JSON.bool) ?? .null
     }
   }
-  
+
   var decimal: Decimal? {
     get {
       guard case .number(let value) = self else { return nil }
@@ -61,22 +61,22 @@ public extension JSON {
     get { decimal?.int }
     set { int64 = newValue.flatMap(Int64.init) }
   }
-  
+
   var int64: Int64? {
     get { decimal?.int64 }
     set { decimal = newValue.flatMap(Decimal.init) }
   }
-  
+
   var float: Float? {
     get { decimal?.float }
     set { double = newValue.flatMap(Double.init) }
   }
-  
+
   var double: Double? {
     get { decimal?.double }
     set { decimal = newValue.flatMap { Decimal($0) } }
   }
-  
+
   var array: [JSON]? {
     get {
       guard case .array(let value) = self else { return nil }
@@ -86,7 +86,7 @@ public extension JSON {
       self = newValue.flatMap(JSON.array) ?? .null
     }
   }
-  
+
   var object: [String: JSON]? {
     get {
       guard case .object(let value) = self else { return nil }
@@ -96,12 +96,12 @@ public extension JSON {
       self = newValue.flatMap(JSON.object) ?? .null
     }
   }
-  
+
   subscript(index: Int) -> JSON? {
     get { array?[index] }
     set { array?[index] = newValue ?? .null }
   }
-  
+
   subscript(key: String) -> JSON? {
     get { object?[key] }
     set { object?[key] = newValue }
@@ -164,7 +164,12 @@ extension JSON: ExpressibleByFloatLiteral {
 extension JSON: Decodable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.singleValueContainer()
-    let decoding = Decoding.null || Decoding(JSON.string) || Decoding(JSON.number) || Decoding(JSON.bool) || Decoding(JSON.array) || Decoding(JSON.object)
+    let decoding = Decoding.null ||
+                             Decoding(JSON.string) ||
+                             Decoding(JSON.number) ||
+                             Decoding(JSON.bool) ||
+                             Decoding(JSON.array) ||
+                             Decoding(JSON.object)
       self = try decoding(container)
   }
 }
@@ -192,17 +197,17 @@ extension JSON: Encodable {
 /// A type-erased combinator for attempting to decode JSON nodes.
 struct Decoding {
   private let decode: (SingleValueDecodingContainer) throws -> JSON
-  
+
   init<T: Decodable>(_ toJSON: @escaping (T) -> JSON) {
     decode = { container in
       try toJSON(container.decode(T.self))
     }
   }
-  
+
   init(_ decode: @escaping (SingleValueDecodingContainer) throws -> JSON) {
     self.decode = decode
   }
-  
+
   func callAsFunction(_ container: SingleValueDecodingContainer) throws -> JSON {
     try decode(container)
   }

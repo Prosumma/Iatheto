@@ -12,21 +12,20 @@ extension Decimal {
   func to<Value>(_ keyPath: KeyPath<NSDecimalNumber, Value>) -> Value {
       return NSDecimalNumber(decimal: self)[keyPath: keyPath]
   }
-  
+
   var double: Double {
       return to(\.doubleValue)
   }
-  
+
   var float: Float {
       return to(\.floatValue)
   }
-  
+
   var int: Int {
       return to(\.intValue)
   }
-  
+
   var int64: Int64 {
       return to(\.int64Value)
   }
 }
-

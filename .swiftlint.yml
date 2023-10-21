@@ -1,0 +1,12 @@
+disabled_rules:
+- identifier_name
+- compiler_protocol_init
+- function_parameter_count
+- force_cast
+- force_try
+- large_tuple
+- nesting
+- todo
+- trailing_comma
+excluded:
+- .build
