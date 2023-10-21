@@ -16,6 +16,14 @@ public enum JSON: Equatable, Hashable {
   case object([String: JSON])
 }
 
+/**
+ Currently this is used only by `JSON.unescape`.
+ */
+public enum JSONError: Error, Equatable {
+  case invalidEscapeSequence(String)
+  case escapeAtEnd
+}
+
 public extension JSON {
   var null: Bool {
     get {
@@ -158,6 +166,51 @@ extension JSON: ExpressibleByIntegerLiteral {
 extension JSON: ExpressibleByFloatLiteral {
   public init(floatLiteral value: FloatLiteralType) {
     self = .number(Decimal(floatLiteral: value))
+  }
+}
+
+public extension JSON {
+  /**
+   Unescapes an escaped, unquoted JSON string.
+   
+   This is not used directly in this package, but is useful
+   for authors of parser combinator packages, such as
+   [Parsimonious](https://github.com/Prosumma/Parsimonious).
+   */
+  static func unescape(_ escaped: String) throws -> String {
+    var escaped = escaped
+    let unicode = NSMutableString(string: escaped)
+    CFStringTransform(unicode, nil, "Any-Hex/Java" as CFString, true)
+    escaped = String(unicode)
+    var unescaped = ""
+    var iterator = escaped.makeIterator()
+    while var c = iterator.next() {
+       // See https://www.ietf.org/rfc/rfc4627.txt
+      if c == "\\" {
+        if let n = iterator.next () {
+          switch n {
+          case "\"":
+            c = "\""
+          case "n":
+            c = "\n" // line feed
+          case "t":
+            c = "\t" // tab
+          case "r":
+            c = "\r" // carriage return
+          case "f":
+            c = "\u{000C}" // form feed
+          case "b":
+            c = "\u{0008}" // backspace
+          default:
+            throw JSONError.invalidEscapeSequence("\\\(n)")
+          }
+        } else {
+          throw JSONError.escapeAtEnd
+        }
+      }
+      unescaped.append(c)
+    }
+    return unescaped
   }
 }
 

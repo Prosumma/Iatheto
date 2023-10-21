@@ -98,6 +98,41 @@ final class IathetoTests: XCTestCase {
     // Then
     XCTAssertFalse(json.null)
   }
+  
+  func testUnescape() throws {
+    // Given
+    let input = "My name is \\\"\\t\\n\\u00b0C\\r\\f\\b!\\\""
+
+    // When
+    let output = try JSON.unescape(input)
+
+    // Then
+    XCTAssertEqual(output, "My name is \"\t\n°C\r\u{000C}\u{0008}!\"")
+  }
+  
+  func testUnescapeWithInvalidEscapeSequence() throws {
+    // Given
+    let input = "\\q"
+
+    // When/Then
+    XCTAssertThrowsError(try JSON.unescape(input)) { error in
+      guard let error = error as? JSONError, error == .invalidEscapeSequence("\\q") else {
+        return XCTFail("Expected .invalidEscapeSequence(\"\\q\"), but got \(error).")
+      }
+    }
+  }
+
+  func testUnescapeWithEscapeAtEnd() throws {
+    // Given
+    let input = "foo\\"
+    
+    // When/Then
+    XCTAssertThrowsError(try JSON.unescape(input)) { error in
+      guard let error = error as? JSONError, error == .escapeAtEnd else {
+        return XCTFail("Expected .escapeAtEnd, but got \(error).")
+      }
+    }
+  }
 
   private func assign<T>(_ keyPath: WritableKeyPath<JSON, T?>, _ value: T) where T: Equatable {
     // Given
