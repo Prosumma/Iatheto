@@ -37,6 +37,16 @@ public extension JSON {
     }
   }
   
+  var bool: Bool? {
+    get {
+      guard case .bool(let value) = self else { return nil }
+      return value
+    }
+    set {
+      self = newValue.flatMap(JSON.bool) ?? .null
+    }
+  }
+  
   var decimal: Decimal? {
     get {
       guard case .number(let value) = self else { return nil }
@@ -73,11 +83,7 @@ public extension JSON {
       return value
     }
     set {
-      if let newValue {
-        self = .array(newValue)
-      } else {
-        self = .null
-      }
+      self = newValue.flatMap(JSON.array) ?? .null
     }
   }
   
@@ -87,11 +93,7 @@ public extension JSON {
       return value
     }
     set {
-      if let newValue {
-        self = .object(newValue)
-      } else {
-        self = .null
-      }
+      self = newValue.flatMap(JSON.object) ?? .null
     }
   }
   
@@ -162,12 +164,8 @@ extension JSON: ExpressibleByFloatLiteral {
 extension JSON: Decodable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.singleValueContainer()
-    if container.decodeNil() {
-      self = .null
-    } else {
-      let decoding = Decoding(JSON.string) || Decoding(JSON.number) || Decoding(JSON.bool) || Decoding(JSON.array) || Decoding(JSON.object)
+    let decoding = Decoding.null || Decoding(JSON.string) || Decoding(JSON.number) || Decoding(JSON.bool) || Decoding(JSON.array) || Decoding(JSON.object)
       self = try decoding(container)
-    }
   }
 }
 
@@ -207,6 +205,21 @@ struct Decoding {
   
   func callAsFunction(_ container: SingleValueDecodingContainer) throws -> JSON {
     try decode(container)
+  }
+}
+
+extension Decoding {
+  static var null: Decoding {
+    .init { container throws in
+      if container.decodeNil() {
+        return .null
+      } else {
+        throw DecodingError.typeMismatch(
+          JSON.self,
+          .init(codingPath: container.codingPath, debugDescription: "Tried to decode null but it failed.")
+        )
+      }
+    }
   }
 }
 
