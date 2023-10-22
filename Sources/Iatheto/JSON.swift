@@ -178,10 +178,6 @@ public extension JSON {
    [Parsimonious](https://github.com/Prosumma/Parsimonious).
    */
   static func unescape(_ escaped: String) throws -> String {
-    var escaped = escaped
-    let unicode = NSMutableString(string: escaped)
-    CFStringTransform(unicode, nil, "Any-Hex/Java" as CFString, true)
-    escaped = String(unicode)
     var unescaped = ""
     var iterator = escaped.makeIterator()
     while var c = iterator.next() {
@@ -201,6 +197,19 @@ public extension JSON {
             c = "\u{000C}" // form feed
           case "b":
             c = "\u{0008}" // backspace
+          case "u":
+            var digits = ""
+            while digits.count < 4, let d = iterator.next() {
+              digits.append(d)
+            }
+            guard 
+              digits.count == 4,
+              let u32 = UInt32(digits, radix: 16),
+              let u = UnicodeScalar(u32)
+            else {
+              throw JSONError.invalidEscapeSequence("\\u\(digits)")
+            }
+            c = Character(u)
           default:
             throw JSONError.invalidEscapeSequence("\\\(n)")
           }
