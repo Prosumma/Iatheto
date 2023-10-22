@@ -226,13 +226,13 @@ public extension JSON {
 extension JSON: Decodable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.singleValueContainer()
-    let decoding = Decoding.null ||
-                             Decoding(JSON.string) ||
-                             Decoding(JSON.number) ||
-                             Decoding(JSON.bool) ||
-                             Decoding(JSON.array) ||
-                             Decoding(JSON.object)
-      self = try decoding(container)
+    let decoding = Decoding.null         ||
+                   Decoding(JSON.string) ||
+                   Decoding(JSON.number) ||
+                   Decoding(JSON.bool)   ||
+                   Decoding(JSON.array)  ||
+                   Decoding(JSON.object)
+    self = try decoding(container)
   }
 }
 
