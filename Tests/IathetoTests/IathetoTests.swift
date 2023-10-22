@@ -121,6 +121,18 @@ final class IathetoTests: XCTestCase {
       }
     }
   }
+  
+  func testUnescapeWithInvalidUnicodeEscapeSequence() throws {
+    // Given
+    let input = "\\u20"
+    
+    // When/Then
+    XCTAssertThrowsError(try JSON.unescape(input)) { error in
+      guard let error = error as? JSONError, error == .invalidEscapeSequence("\\u20") else {
+        return XCTFail("Expected .invalidEscapeSequence(\"\\u20\"), but got \(error).")
+      }
+    }
+  }
 
   func testUnescapeWithEscapeAtEnd() throws {
     // Given
